@@ -13,4 +13,6 @@ public interface HomeService {
     List<Goods> getNewGoods(Integer limit);
 
     List<Banner> getBanners();
+
+    Category getSubCategoriesById(Integer id);
 }

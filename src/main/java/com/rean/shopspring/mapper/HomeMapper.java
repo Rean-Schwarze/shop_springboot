@@ -16,11 +16,20 @@ public interface HomeMapper {
     @Select("select * from sub_category")
     List<Category> getAllSubCategories();
 
+    @Select("select * from category where id=#{id}")
+    Category getCategoryById(Integer id);
+
     @Select("select * from sub_category where parent_id=#{id};")
     List<Category> getSubCategoriesByParentId(int id);
 
     @Select("select * from goods where category_id=#{id} limit 8")
     List<Goods> get8GoodsByCategory(Integer id);
+
+    @Select("select * from goods where sub_category_id=#{id}")
+    List<Goods> getGoodsBySubCategoryId(Integer id);
+
+    @Select("select * from goods where sub_category_id2=#{id}")
+    List<Goods> getGoodsBySubCategoryId2(Integer id);
 
     @Select("select address from main_pictures where goods_id=#{id} limit 1")
     String getGoodsPicturesById(Integer id);

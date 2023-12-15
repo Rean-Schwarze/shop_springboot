@@ -40,4 +40,11 @@ public class HomeController {
         List<Banner> bannerList=homeService.getBanners();
         return Result.success(bannerList);
     }
+
+    @RequestMapping("/category")
+    @ResponseBody
+    public Result<Category> getSubCategories(@RequestParam("id") String id){
+        Category category=homeService.getSubCategoriesById(Integer.parseInt(id));
+        return Result.success(category);
+    }
 }
