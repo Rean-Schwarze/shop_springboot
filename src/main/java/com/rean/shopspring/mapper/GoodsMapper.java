@@ -47,4 +47,10 @@ public interface GoodsMapper {
 
     @Select("select * from properties where goods_id=#{id}")
     List<Property> getDetailPropertiesByGoodsId(Integer id);
+
+    @Select("select * from goods where sub_category_id=#{id} order by #{mode}")
+    List<Goods> getGoodsBySubCategory(Integer id, String mode);
+
+    @Select("select * from goods where sub_category_id2=#{id} order by #{mode}")
+    List<Goods> getGoodsBySubCategory2(Integer id, String mode);
 }

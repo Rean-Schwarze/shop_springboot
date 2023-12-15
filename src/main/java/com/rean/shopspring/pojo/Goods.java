@@ -3,6 +3,7 @@ package com.rean.shopspring.pojo;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -29,4 +30,6 @@ public class Goods {
     private List<Specs> specs;
     private List<Sku> skus;
     private Detail details;
+    private List<Category> categories;
+    private Timestamp pubTime;
 }

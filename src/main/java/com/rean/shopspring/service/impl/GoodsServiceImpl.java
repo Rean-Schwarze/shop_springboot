@@ -1,5 +1,6 @@
 package com.rean.shopspring.service.impl;
 
+import com.rean.shopspring.mapper.CategoryMapper;
 import com.rean.shopspring.mapper.GoodsMapper;
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.GoodsService;
@@ -13,6 +14,8 @@ import java.util.List;
 public class GoodsServiceImpl implements GoodsService {
     @Autowired
     private GoodsMapper goodsMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
 
     @Override
     public Goods getGoodsById(Integer id){
@@ -41,6 +44,13 @@ public class GoodsServiceImpl implements GoodsService {
 
         goods.setDetails(new Detail(goodsMapper.getDetailPicturesByGoodsId(Integer.parseInt(goods.getId())),
                 goodsMapper.getDetailPropertiesByGoodsId(Integer.parseInt(goods.getId()))));
+
+        Category sub=categoryMapper.getSubCategoryById(goods.getSub_category_id());
+        Category par=categoryMapper.getCategoryById(goods.getCategory_id());
+        List<Category> categories=new LinkedList<>();
+        categories.add(sub);
+        categories.add(par);
+        goods.setCategories(categories);
 
         return goods;
     }
