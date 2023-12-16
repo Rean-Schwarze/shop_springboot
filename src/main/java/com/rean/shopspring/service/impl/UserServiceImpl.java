@@ -21,6 +21,15 @@ public class UserServiceImpl implements UserService {
         // 加密密码
         String md5String= Md5Util.getMD5String(password);
         // 添加
-        userMapper.add(username,md5String,email,nickname,receiver,contact,address);
+        userMapper.add(username,md5String,email,nickname);
+        User u=userMapper.findByUserName(username);
+        addAddress(receiver,contact,address,u.getId());
+    }
+
+    @Override
+    public void addAddress(String receiver, String contact, String address, Integer id) {
+        Integer count= userMapper.getCountOfAddressByUserId(id);
+        boolean isDefault= count == 0;
+        userMapper.addAddressByUserId(id,receiver,contact,address,isDefault);
     }
 }

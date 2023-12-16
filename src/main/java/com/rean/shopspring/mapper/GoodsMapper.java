@@ -34,6 +34,9 @@ public interface GoodsMapper {
     @Select("select * from specs_values where specs_id=#{id}")
     List<Spec_values> getSpcesValueBySpecsId(String id);
 
+    @Select("select * from specs_values where id=(select specs_values_id from specs_values_sku where sku_id=#{id})")
+    Spec_values getSpecValuesBySkuId(String id);
+
     @Select("select * from sku where id in (select sku_id from specs_values_sku where goods_id=#{id})")
     List<Sku> getSkuByGoodsId(String id);
 

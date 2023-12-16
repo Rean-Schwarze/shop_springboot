@@ -10,7 +10,13 @@ public interface UserMapper {
     @Select("select * from user where username=#{username}")
     User findByUserName(String username);
 
-    @Insert("insert into user(username,password,email,nickname,receiver,contact,address,isadmin,isvalid)" +
-            " values(#{username},#{password},#{email},#{nickname},#{receiver},#{contact},#{address},0,1)")
-    void add(String username, String password,String email,String nickname,String receiver,String contact,String address);
+    @Insert("insert into user(username,password,email,nickname,isadmin,isvalid)" +
+            " values(#{username},#{password},#{email},#{nickname},0,1)")
+    void add(String username, String password,String email,String nickname);
+
+    @Select("select count(*) from user_address where user_id=#{id}")
+    Integer getCountOfAddressByUserId(Integer id);
+
+    @Insert("insert into user_address(receiver, contact, address, isDefault, user_id) VALUES (#{receiver},#{contact},#{address},#{isDefault},#{id})")
+    void addAddressByUserId(Integer id,String receiver,String contact,String address,boolean isDefault);
 }

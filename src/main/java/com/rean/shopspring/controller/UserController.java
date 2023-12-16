@@ -10,11 +10,14 @@ import com.rean.shopspring.utils.Md5Util;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -22,6 +25,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     @PostMapping("/register")
     public Result register(String username,@Pattern(regexp="^\\${4,16}$") String password, String email, String nickname, String receiver, String contact, String address){
         // 查询用户
@@ -36,11 +41,7 @@ public class UserController {
 
     }
 
-//    @ResponseBody
-//    public String getLoginResponseUser(User loginUser) throws JsonProcessingException {
-//        ObjectMapper mapper=new ObjectMapper();
-//        return mapper.writeValue(loginUser);
-//    }
+
     @PostMapping("/login")
     @ResponseBody
     public Result<Map<String,Object>> login(@RequestBody Map<String,String> user) {
@@ -61,6 +62,9 @@ public class UserController {
             userMap.put("email",loginUser.getEmail());
             String token = JwtUtil.genToken(userMap);
             userMap.put("token",token);
+            //把token存储到redis中
+            ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+            operations.set(token,token,1, TimeUnit.HOURS);
             return Result.success(userMap);
         }
         return Result.error("密码错误");
