@@ -1,10 +1,9 @@
 package com.rean.shopspring.mapper;
 
 import com.rean.shopspring.pojo.*;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Results;
+import com.rean.shopspring.pojo.Property;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
@@ -36,6 +35,15 @@ public interface GoodsMapper {
 
     @Select("select * from specs_values where id=(select specs_values_id from specs_values_sku where sku_id=#{id})")
     Spec_values getSpecValuesBySkuId(String id);
+
+    @Select("select price from sku where id=#{id}")
+    String getPriceBySkuId(String id);
+
+    @Select("select inventory from sku where id=#{id}")
+    int getInventoryBySkuId(String id);
+
+    @Update("update sku set inventory=#{count} where id=#{id}")
+    void updateSkuInventory(String id,int count);
 
     @Select("select * from sku where id in (select sku_id from specs_values_sku where goods_id=#{id})")
     List<Sku> getSkuByGoodsId(String id);

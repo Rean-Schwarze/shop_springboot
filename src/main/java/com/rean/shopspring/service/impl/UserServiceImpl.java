@@ -1,11 +1,14 @@
 package com.rean.shopspring.service.impl;
 
 import com.rean.shopspring.mapper.UserMapper;
+import com.rean.shopspring.pojo.Address;
 import com.rean.shopspring.pojo.User;
 import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,5 +34,10 @@ public class UserServiceImpl implements UserService {
         Integer count= userMapper.getCountOfAddressByUserId(id);
         boolean isDefault= count == 0;
         userMapper.addAddressByUserId(id,receiver,contact,address,isDefault);
+    }
+
+    @Override
+    public List<Address> getAddress(Integer id){
+        return userMapper.getAddressByUserId(id);
     }
 }

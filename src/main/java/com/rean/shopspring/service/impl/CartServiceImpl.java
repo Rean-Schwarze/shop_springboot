@@ -31,24 +31,34 @@ public class CartServiceImpl implements CartService {
         String spec_name=goodsMapper.getSpecNameBySpceValueId(Integer.valueOf(spec_values.getId()));
         String attrsText=spec_name+"："+spec_values.getName();
 
+        int postFee=8;
         String price= String.valueOf(cartMapper.getPriceBySkuId(skuId));
+        Integer price_int=Integer.parseInt(price.split("\\.")[0]);
+        String totalPrice= String.valueOf(price_int*count);
+        String totalPayPrice= String.valueOf(Integer.parseInt(totalPrice)+postFee);
 
         goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goods.getId())));
         CartItem cartItem=new CartItem(goods.getId(),price,count,skuId,goods.getName(),
                 attrsText,new ArrayList<>(),goods.getMainPictures().get(0),price,price,true,
-                goods.getInventory(),false,false,0);
+                goods.getInventory(),false,false,postFee,price,totalPrice,totalPayPrice);
 
         Map<String, Object> u=ThreadLocalUtil.get();
         Integer user_id= Integer.parseInt((String) u.get("id"));
 
-        cartMapper.addOrderList(Double.valueOf(cartItem.getPrice()),count,Integer.parseInt(goods.getId()),skuId,user_id);
+        Integer SkuIdCount=cartMapper.getSkuIdCount(skuId);
+        if(SkuIdCount==0){
+            cartMapper.addOrderList(Double.valueOf(cartItem.getPrice()),count,Integer.parseInt(goods.getId()),skuId,user_id);
+        }
+        else{
+            cartMapper.updateCountBySkuId(skuId,SkuIdCount+count);
+        }
         return cartItem;
     }
 
     @Override
     public List<CartItem> getCartList() {
         Map<String, Object> u=ThreadLocalUtil.get();
-        Integer user_id= (Integer) u.get("id");
+        Integer user_id= Integer.parseInt((String) u.get("id"));
         List<CartItem> cartItemList=cartMapper.getCartList(user_id);
         for(CartItem item:cartItemList){
             Goods goods=goodsMapper.getGoodsById(Integer.parseInt(item.getId()));
@@ -91,16 +101,18 @@ public class CartServiceImpl implements CartService {
                 CartItem cartItem=addCart(goods_id,skuId,count);
             }
             else{
-                cartMapper.updateCountBySkuId(skuId,count);
+                cartMapper.updateCountBySkuId(skuId,SkuIdCount+count);
             }
         }
     }
 
     @Override
     public boolean deleteCartList(List<String> list){
+        Map<String, Object> u=ThreadLocalUtil.get();
+        Integer user_id=Integer.parseInt((String) u.get("id")) ;
         try{
             for(String id:list){
-                cartMapper.deleteBySkuId(id);
+                cartMapper.deleteBySkuIdAndUserId(id,user_id);
             }
             return true;
         }

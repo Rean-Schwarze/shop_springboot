@@ -8,6 +8,33 @@ spring:
     redis:
       host: localhost
       port: 6379
+  #邮箱基本配置
+  mail:
+    #配置smtp服务主机地址
+    # qq邮箱为smtp.qq.com          端口号465或587
+    # sina    smtp.sina.cn
+    # aliyun  smtp.aliyun.com
+    # 163     smtp.163.com       端口号465或994
+    host: smtp.qq.com
+    #发送者邮箱
+    username: 1720921624@qq.com
+    #配置密码,注意不是真正的密码，而是刚刚申请到的授权码
+    password: lxucfubbivlhcggi
+    #端口号465或587
+    port: 587
+    #默认的邮件编码为UTF-8
+    default-encoding: UTF-8
+    #其他参数
+    properties:
+      mail:
+        #配置SSL 加密工厂
+        smtp:
+          ssl:
+            #本地测试，先放开ssl
+            enable: false
+            required: false
+          #开启debug模式，这样邮件发送过程的日志会在控制台打印出来，方便排查错误
+        debug: true
 
 mybatis:
   configuration:
@@ -15,3 +42,9 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
   port: 8080
+
+alipay:
+  appId: 9021000131656346
+  appPrivateKey: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCWIvDHd76uYtmlYv2IEVWuHECw6XBIYhk8dkL5NB6VMscXEGyD8vN+eWcUnKBQDGuSAUEfafcWOQex+YpENJMhV+V1WwRXffiwjZJzz41Pa3QiWjoqOcl0fPU0w5ZxrMJrs5XK2VFB/QeHuSZGeChFCsr7/73D6Mq6e0hugtJ9mTIQrOTj5ovAWRALWNXBCpTBMhPT/K5OZZOtXYgdE7Tgb7hTWPKbKf9z+ZaXcoBLSUGkDh+OODJtE2J76ZtlxY6hDOdagpyHi1ZOv11oMKzRyorK0gWobATntjYdFGVigLDDO0VHVOAt5Yd0ruTpaI//w6xCSOyl7HDqGwde8XoBAgMBAAECggEAOECRLHteM2KQH5puWcv86UZmqqJcUpKG2BOLVmnDx60F0UtzDSE7QDjmeV+R5UwyBbt4lfeS/32Qt4tC1flI4yZWr9jRUKK/Sg9RPxkV3hrpoXFi9609IOssyH874A2VrtrTlfREsM/IQX8Kqz6b//piQXb5t+yCAMruQZG8ohfwMM934hN68o3qNQPTbLhh5no4/ufO+m9w8WsXIoffrzXVQJsUlrGqyWY8J6ijy4euH6NEHP2D1oljphhyYTnMXGgZT0MXZ0t+mdi5tn0C+9SLYEbXmXGHa7FbWQwJKJDhYAPGpQtOnBslf9LsLhSZqweFhuzxKx9PaRBOqTEtAQKBgQDGqDa3+y4OkmxGQpCcCLzS+3ETBsFfYlxt9oLpetHNayMXCynhNDS2fCuu0OBNJTiV3V4xjnabd9YmLNxlMBoTZ4yK56ldWVszwposTWSLRmnkXxOMLo2QbhMY22oJ28DZc6YS6zE9eYVzsc9HZDgzLiZbO4Gd5DFZkB0s5MR00QKBgQDBeUrEOwmG1/JY+EqHt+jaC2/rItE4BmB1I0Tpvl1c5BjSDFkXaN+wS5ArdakMRRuHEyTy7Xvq13NyVulXwzdNlE2qHYrZlu9R+vHkZBznSbjhK705iHP4NdzhyOmWJKJGVXtq9lV+iLHWsu2rQC8v5hv16aevlr2+guTjFWS+MQKBgHte4/yGJSgvjsZjeGMumfV86dAjFdwivbwcp1hQShMEQhqBeFS/kyzxGD/MwD+oqeeIPoMQMmCCn5+9pHHC2a7LU+C/1dJ/N8CBTjXNKm/EHucQlJcuIgRcF8gMG2Jb8vwYcj61iTLgURx0hIGVn8FJG9D0t55SpMM2WKgUulzBAoGAHB24U9QQilwPiAZtLlP3rthCp3Uj2nRyyBMcDKvxfXJYeQ36VICVIVWZ2fb7XiEc4wBROkxw2av9xvwCZRKlksyejL5GU2Cv3sYNKReza5k3GOH2WcoOsF+Dffxolb01J+t8SAsMWZsb3QubpmtpcBiMr6wJBmdto6X6BVYykcECgYEAxA0gFHZsaArxmluMzP9BZw/on5mORzZS8pxwZM1DAUpTfHnaq8SFUC0hstsspr1v6VzMO4wXUrV0/R7nTYqFXdxLowxr/V8qAFHn8k0f+JAjHeLV+FfO1z89P24irqbiIgGVVTcVczxGuwlRp2j7owgZCQ6K69ypyCukPozfn1o=
+  alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArBs2tSjej7zINSiapFZHZvAfD55P+SnMo6TaGsSnAqIQJDjs94jsVu+UQr+z7PL0Zv0nCqCezZq8YPKBTNHpwPg3TKUY/bD35LOI7l0r0DyQoawvBAGo4j5enAUp8DbwqhGXV3zvdEJn+Z29EnlEWjeKXzBhOaA1M+etpaBbFPpxgtWuITkcIpmRDcKFbmR75OyTVXG2AiI6D/K1xj7mog9NQ6BPGbBbN6VKXVsi4pNpftyI5Zv8CRrIZ+gyu7HxjlYTVV4ZsJYerpgNf4OwkCCQsIlVrfOt+pIUocOJmJi0gMb4BQ7OxW2WSwppKTcBWn2MW6WAQ2MOVR7uBTG6awIDAQAB
+  notifyUrl: http://127.0.0.1:5173/paycallback

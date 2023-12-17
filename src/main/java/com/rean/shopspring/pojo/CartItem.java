@@ -27,4 +27,7 @@ public class CartItem {
     private boolean isEffective;
     private boolean isCollect;
     private Integer postFee;
+    private String payPrice;
+    private String totalPrice;
+    private String totalPayPrice;
 }

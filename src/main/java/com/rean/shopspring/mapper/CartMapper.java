@@ -26,6 +26,6 @@ public interface CartMapper {
     @Select("select price from sku where id=#{skuId}")
     Double getPriceBySkuId(String skuId);
 
-    @Delete("delete from order_list where skuId=#{skuId}")
-    void deleteBySkuId(String skuId);
+    @Delete("delete from order_list where skuId=#{skuId} and user_id=#{user_id}")
+    void deleteBySkuIdAndUserId(String skuId,Integer user_id);
 }

@@ -2,11 +2,13 @@ package com.rean.shopspring.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rean.shopspring.pojo.Address;
 import com.rean.shopspring.pojo.Result;
 import com.rean.shopspring.pojo.User;
 import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.JwtUtil;
 import com.rean.shopspring.utils.Md5Util;
+import com.rean.shopspring.utils.ThreadLocalUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -68,5 +71,13 @@ public class UserController {
             return Result.success(userMap);
         }
         return Result.error("密码错误");
+    }
+
+    @RequestMapping("/address")
+    @ResponseBody
+    public Result<List<Address>> getAddress(){
+        Map<String, Object> u= ThreadLocalUtil.get();
+        Integer user_id= Integer.parseInt((String) u.get("id"));
+        return Result.success(userService.getAddress(user_id));
     }
 }

@@ -4,10 +4,7 @@ import com.rean.shopspring.pojo.CartItem;
 import com.rean.shopspring.pojo.Result;
 import com.rean.shopspring.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +14,7 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    @CrossOrigin
     @RequestMapping("/member/cart")
     @ResponseBody
     public Result<CartItem> addCart(@RequestBody Map<String,String> orderItem){
@@ -24,12 +22,14 @@ public class CartController {
                 Integer.parseInt(orderItem.get("count"))));
     }
 
+    @CrossOrigin
     @RequestMapping("/member/cartlist")
     @ResponseBody
     public Result<List<CartItem>> getCartList(){
         return Result.success(cartService.getCartList());
     }
 
+    @CrossOrigin
     @RequestMapping("/member/cart/merge")
     @ResponseBody
     public Result mergeCart(@RequestBody List<Map<String,Object>> cartList){
@@ -37,6 +37,7 @@ public class CartController {
         return Result.success();
     }
 
+    @CrossOrigin
     @RequestMapping("/member/cart/delete")
     @ResponseBody
     public Result deleteCart(@RequestBody Map<String,Object> list){
