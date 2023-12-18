@@ -17,10 +17,12 @@ public class AliOssUtil {
     // 从环境变量中获取访问凭证。运行本代码示例之前，请确保已设置环境变量OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。
     //EnvironmentVariableCredentialsProvider credentialsProvider = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
     private static final String ACCESS_KEY_ID;
+    static String ackey_s="TFRBSTV0U0pwWm9ldkRLWTdzSm5jdkdn";
+    private static final byte[] ackey=ackey_s.getBytes();
 
     static {
         try {
-            ACCESS_KEY_ID = Base64Util.decryBASE64("TFRBSTV0U0pwWm9ldkRLWTdzSm5jdkdn".getBytes());
+            ACCESS_KEY_ID = Base64Util.decryBASE64(ackey);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

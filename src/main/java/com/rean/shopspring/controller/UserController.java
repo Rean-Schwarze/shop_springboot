@@ -31,7 +31,14 @@ public class UserController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
     @PostMapping("/register")
-    public Result register(String username,@Pattern(regexp="^\\${4,16}$") String password, String email, String nickname, String receiver, String contact, String address){
+    public Result register(@RequestBody Map<String,String> user){
+        String username=user.get("account");
+        String password=user.get("password");
+        String email=user.get("email");
+        String nickname=user.get("nickName");
+        String receiver=user.get("receiver");
+        String contact=user.get("contact");
+        String address=user.get("address");
         // 查询用户
         User u=userService.findByUserName(username);
         if (u==null){

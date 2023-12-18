@@ -32,7 +32,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addAddress(String receiver, String contact, String address, Integer id) {
         Integer count= userMapper.getCountOfAddressByUserId(id);
-        boolean isDefault= count == 0;
+        int isDefault=0;
+        if (count==0){
+            isDefault=1;
+        }
         userMapper.addAddressByUserId(id,receiver,contact,address,isDefault);
     }
 

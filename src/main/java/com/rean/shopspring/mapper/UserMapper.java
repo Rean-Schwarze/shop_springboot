@@ -21,7 +21,7 @@ public interface UserMapper {
     Integer getCountOfAddressByUserId(Integer id);
 
     @Insert("insert into user_address(receiver, contact, address, isDefault, user_id) VALUES (#{receiver},#{contact},#{address},#{isDefault},#{id})")
-    void addAddressByUserId(Integer id,String receiver,String contact,String address,boolean isDefault);
+    void addAddressByUserId(Integer id,String receiver,String contact,String address,int isDefault);
 
     @Select("select * from user_address where user_id=#{id}")
     List<Address> getAddressByUserId(Integer id);
