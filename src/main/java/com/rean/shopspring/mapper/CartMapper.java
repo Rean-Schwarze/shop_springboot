@@ -14,8 +14,8 @@ public interface CartMapper {
     @Select("select * from order_list where user_id =#{id}")
     List<CartItem> getCartList(Integer user_id);
 
-    @Select("select count(*) from order_list where skuId=#{skuId}")
-    Integer getSkuIdCount(String skuId);
+    @Select("select count(*) from order_list where skuId=#{skuId} and user_id=#{user_id}")
+    Integer getSkuIdCount(String skuId, Integer user_id);
 
     @Update("update order_list set count=#{count} where skuId=#{skuId}")
     void updateCountBySkuId(String skuId, Integer count);

@@ -45,7 +45,7 @@ public class CartServiceImpl implements CartService {
         Map<String, Object> u=ThreadLocalUtil.get();
         Integer user_id= Integer.parseInt((String) u.get("id"));
 
-        Integer SkuIdCount=cartMapper.getSkuIdCount(skuId);
+        Integer SkuIdCount=cartMapper.getSkuIdCount(skuId,user_id);
         if(SkuIdCount==0){
             cartMapper.addOrderList(Double.valueOf(cartItem.getPrice()),count,Integer.parseInt(goods.getId()),skuId,user_id);
         }
@@ -90,12 +90,12 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void mergeCartList(List<Map<String, Object>> cartList) {
-//        Map<String, Object> u=ThreadLocalUtil.get();
-//        Integer user_id= (Integer) u.get("id");
+        Map<String, Object> u=ThreadLocalUtil.get();
+        Integer user_id= Integer.parseInt((String) u.get("id"));
         for(Map<String,Object> cart:cartList){
             Integer count= (Integer) cart.get("count");
             String skuId=(String) cart.get("skuId");
-            Integer SkuIdCount=cartMapper.getSkuIdCount(skuId);
+            Integer SkuIdCount=cartMapper.getSkuIdCount(skuId,user_id);
             if(SkuIdCount==0){
                 Integer goods_id=cartMapper.getGoodsIdBySkuId(skuId);
                 CartItem cartItem=addCart(goods_id,skuId,count);
