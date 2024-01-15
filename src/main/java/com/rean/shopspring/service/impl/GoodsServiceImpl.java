@@ -7,8 +7,7 @@ import com.rean.shopspring.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class GoodsServiceImpl implements GoodsService {
@@ -54,4 +53,31 @@ public class GoodsServiceImpl implements GoodsService {
 
         return goods;
     }
+
+    @Override
+    public List<Map<String,String>> getGoodsByRelevant(Integer limit){
+        int total=goodsMapper.getGoodsCount();
+        if(limit+1>total){
+            limit=total-1;
+        }
+        List<Goods> goodsList=goodsMapper.getGoodsByRandom(limit+1);
+        List<Map<String,String>> goodsListRelevant=new LinkedList<>();
+        for(int i=0;i<goodsList.size();i++){
+            if (Objects.equals(goodsList.get(i).getId(), "1000002")){
+                continue;
+            }
+            goodsList.get(i).setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goodsList.get(i).getId())));
+            Map<String,String> goodsMap=new HashMap<>();
+            goodsMap.put("id",goodsList.get(i).getId());
+            goodsMap.put("name",goodsList.get(i).getName());
+            goodsMap.put("desc",goodsList.get(i).getDesc());
+            goodsMap.put("price",goodsList.get(i).getPrice());
+            goodsMap.put("picture",goodsList.get(i).getMainPictures().get(0));
+            if(goodsListRelevant.size()<4){
+                goodsListRelevant.add(goodsMap);
+            }
+        }
+        return goodsListRelevant;
+    }
+
 }

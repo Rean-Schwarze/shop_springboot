@@ -17,7 +17,6 @@ public class AliPayConfig {
     private String alipayPublicKey;
     private String notifyUrl;
 
-
     @PostConstruct
     public void init() {
         // 设置参数（全局只需设置一次）

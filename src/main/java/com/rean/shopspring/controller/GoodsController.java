@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 public class GoodsController {
     @Autowired
@@ -19,5 +22,12 @@ public class GoodsController {
     public Result<Goods> getGoodsById(@RequestParam("id") String id){
         Goods goods=goodsService.getGoodsById(Integer.parseInt(id));
         return Result.success(goods);
+    }
+
+    @RequestMapping("/goods/relevant")
+    @ResponseBody
+    public Result<List<Map<String,String>>> getRelevantGoods(@RequestParam("limit") int limit){
+        List<Map<String,String>> goodsList=goodsService.getGoodsByRelevant(limit);
+        return Result.success(goodsList);
     }
 }

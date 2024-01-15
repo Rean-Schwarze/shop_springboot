@@ -2,7 +2,12 @@ package com.rean.shopspring.pojo;
 
 
 import lombok.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 
 //统一响应结果
 @NoArgsConstructor
@@ -13,6 +18,8 @@ public class Result<T> {
     private Integer code;//业务状态码  0-成功  1-失败
     private String message;//提示信息
     private T result;//响应数据
+
+
 
     //快速返回操作成功响应结果(带响应数据)
     public static <E> Result<E> success(E result) {
@@ -27,4 +34,6 @@ public class Result<T> {
     public static Result error(String message) {
         return new Result(0, message, null);
     }
+
+
 }

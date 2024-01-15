@@ -64,4 +64,10 @@ public interface GoodsMapper {
 
     @Select("select * from goods where sub_category_id2=#{id} order by #{mode}")
     List<Goods> getGoodsBySubCategory2(Integer id, String mode);
+
+    @Select("select id,name,`desc`,price from goods order by RAND() LIMIT #{limit}")
+    List<Goods> getGoodsByRandom(Integer limit);
+
+    @Select("select count(*) from goods")
+    int getGoodsCount();
 }

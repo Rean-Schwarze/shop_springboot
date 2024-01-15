@@ -16,7 +16,7 @@ public interface OrderMapper {
     void addOrder(Timestamp createTime, int payType, int orderState, Timestamp payLastTime, int postFee, int payMoney,
                   int totalMoney, int totalNum, int payChannel, int user_id, int user_address_id);
 
-    @Select("select * from `order` where user_id=#{user_id} and user_address_id=#{user_address_id} and payMoney=#{payMoney} and orderState=1")
+    @Select("select * from `order` where user_id=#{user_id} and user_address_id=#{user_address_id} and payMoney=#{payMoney} and orderState=1 order by createTime desc Limit 1")
     Order getOrder(int user_id,int user_address_id,int payMoney);
 
     @Select("select * from `order` where id=#{id}")
