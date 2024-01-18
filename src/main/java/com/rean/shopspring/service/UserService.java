@@ -13,4 +13,7 @@ public interface UserService {
     void addAddress(String receiver,String contact,String address, Integer id);
 
     List<Address> getAddress(Integer id);
+
+//    用户登录后，从ThreadLocalUtil中获取用户id
+    int getUserIdIfLogin();
 }

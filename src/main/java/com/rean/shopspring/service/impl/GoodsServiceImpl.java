@@ -16,12 +16,14 @@ public class GoodsServiceImpl implements GoodsService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+//    获取商品所有属性
     @Override
     public Goods getGoodsById(Integer id){
         Goods goods=goodsMapper.getGoodsById(id);
         goods.setBrand(goodsMapper.getBrandById(goods.getBrand_id()));
         goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goods.getId())));
 
+//        获取specs
         List<Specs> specs=goodsMapper.getSpcesByGoodsId(Integer.parseInt(goods.getId()));
         for(Specs spec:specs){
             List<Spec_values> spec_values=goodsMapper.getSpcesValueBySpecsId(spec.getId());
@@ -29,6 +31,7 @@ public class GoodsServiceImpl implements GoodsService {
         }
         goods.setSpecs(specs);
 
+//        获取skus
         List<Sku> skus=goodsMapper.getSkuByGoodsId(goods.getId());
         for(Sku sku:skus){
             List<Spec_values> spec_values=goodsMapper.getSkuSpecBySkuId(sku.getId());
@@ -44,6 +47,7 @@ public class GoodsServiceImpl implements GoodsService {
         goods.setDetails(new Detail(goodsMapper.getDetailPicturesByGoodsId(Integer.parseInt(goods.getId())),
                 goodsMapper.getDetailPropertiesByGoodsId(Integer.parseInt(goods.getId()))));
 
+//        设置所属分类
         Category sub=categoryMapper.getSubCategoryById(goods.getSub_category_id());
         Category par=categoryMapper.getCategoryById(goods.getCategory_id());
         List<Category> categories=new LinkedList<>();
@@ -54,6 +58,7 @@ public class GoodsServiceImpl implements GoodsService {
         return goods;
     }
 
+//    获取“猜你喜欢”商品的属性（id、name、desc、price、picture）
     @Override
     public List<Map<String,String>> getGoodsByRelevant(Integer limit){
         int total=goodsMapper.getGoodsCount();
@@ -61,19 +66,20 @@ public class GoodsServiceImpl implements GoodsService {
             limit=total-1;
         }
         List<Goods> goodsList=goodsMapper.getGoodsByRandom(limit+1);
+
         List<Map<String,String>> goodsListRelevant=new LinkedList<>();
-        for(int i=0;i<goodsList.size();i++){
-            if (Objects.equals(goodsList.get(i).getId(), "1000002")){
+        for (Goods goods : goodsList) {
+            if (Objects.equals(goods.getId(), "1000002")) {
                 continue;
             }
-            goodsList.get(i).setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goodsList.get(i).getId())));
-            Map<String,String> goodsMap=new HashMap<>();
-            goodsMap.put("id",goodsList.get(i).getId());
-            goodsMap.put("name",goodsList.get(i).getName());
-            goodsMap.put("desc",goodsList.get(i).getDesc());
-            goodsMap.put("price",goodsList.get(i).getPrice());
-            goodsMap.put("picture",goodsList.get(i).getMainPictures().get(0));
-            if(goodsListRelevant.size()<4){
+            goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goods.getId())));
+            Map<String, String> goodsMap = new HashMap<>();
+            goodsMap.put("id", goods.getId());
+            goodsMap.put("name", goods.getName());
+            goodsMap.put("desc", goods.getDesc());
+            goodsMap.put("price", goods.getPrice());
+            goodsMap.put("picture", goods.getMainPictures().get(0));
+            if (goodsListRelevant.size() < 4) {
                 goodsListRelevant.add(goodsMap);
             }
         }

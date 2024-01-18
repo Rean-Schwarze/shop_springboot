@@ -20,7 +20,8 @@ public interface UserMapper {
     @Select("select count(*) from user_address where user_id=#{id}")
     Integer getCountOfAddressByUserId(Integer id);
 
-    @Insert("insert into user_address(receiver, contact, address, isDefault, user_id) VALUES (#{receiver},#{contact},#{address},#{isDefault},#{id})")
+    @Insert("insert into user_address(receiver, contact, address, isDefault, user_id) VALUES " +
+            "(#{receiver},#{contact},#{address},#{isDefault},#{id})")
     void addAddressByUserId(Integer id,String receiver,String contact,String address,int isDefault);
 
     @Select("select * from user_address where user_id=#{id}")

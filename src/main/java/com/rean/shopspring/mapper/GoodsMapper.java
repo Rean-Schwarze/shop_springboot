@@ -53,6 +53,7 @@ public interface GoodsMapper {
 
     @Select("select name from specs where id=(select specs_id from specs_values where id=#{id})")
     String getSpecNameBySpceValueId(Integer id);
+
     @Select("select address from detail_pictures where goods_id=#{id}")
     List<String> getDetailPicturesByGoodsId(Integer id);
 
@@ -65,9 +66,15 @@ public interface GoodsMapper {
     @Select("select * from goods where sub_category_id2=#{id} order by #{mode}")
     List<Goods> getGoodsBySubCategory2(Integer id, String mode);
 
+//    获取商品（随机、指定limit）
     @Select("select id,name,`desc`,price from goods order by RAND() LIMIT #{limit}")
     List<Goods> getGoodsByRandom(Integer limit);
 
+//    获取商品总数
     @Select("select count(*) from goods")
     int getGoodsCount();
+
+//    根据skuId获取单个商品的封面、描述、名称
+    @Select("select picture,name,`desc` from goods where id=(select goods_id from specs_values_sku where sku_id=#{skuId})")
+    Goods getGoodsBySkuId(String skuId);
 }

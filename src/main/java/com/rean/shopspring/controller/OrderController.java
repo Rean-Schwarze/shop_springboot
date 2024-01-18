@@ -5,10 +5,10 @@ import com.rean.shopspring.service.CartService;
 import com.rean.shopspring.service.OrderService;
 import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.ThreadLocalUtil;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +25,15 @@ public class OrderController {
     @CrossOrigin
     @RequestMapping("/member/order/pre")
     @ResponseBody
-    public Result<Map<String,Object>> genetateOrderPre(){
-        Map<String, Object> u= ThreadLocalUtil.get();
-        Integer user_id= Integer.parseInt((String) u.get("id"));
+//    获取预处理订单（计算总价）
+    public Result<Map<String,Object>> generateOrderPre(@RequestBody Map<String,List<String>> body){
+        int user_id=userService.getUserIdIfLogin();
         List<Address> userAddresses=userService.getAddress(user_id);
-        List<CartItem> goods=cartService.getCartList();
+        List<String> skus=body.get("skus");
+        List<CartItem> goods=cartService.getCartList(skus);
         Integer goodsCount=0;
         int totalPrice=0;
-        int postFee=8;
+        int postFee=0;
         for(CartItem good:goods){
             goodsCount+=good.getCount();
             int total_price=good.getCount()*Integer.parseInt(good.getNowPrice().split("\\.")[0]);
@@ -53,7 +54,7 @@ public class OrderController {
     }
 
     @CrossOrigin
-    @RequestMapping("/member/order")
+    @RequestMapping(value = "/member/order",method = RequestMethod.POST)
     @ResponseBody
     public Result<Order> postOrder(@RequestBody Map<String,Object> orderOption){
         return Result.success(orderService.postOrder(orderOption));
@@ -64,5 +65,33 @@ public class OrderController {
     @ResponseBody
     public Result<Order> getOrder(@PathVariable String id){
         return Result.success(orderService.getOrder(Integer.parseInt(id)));
+    }
+
+    @CrossOrigin
+    @GetMapping("/member/order")
+    @ResponseBody
+    public Result<Map<String,Object>> getUserOrder(@RequestParam("orderState") int orderState,
+                                                         @RequestParam("page") int page,
+                                                         @RequestParam("pageSize") int pageSize){
+        int user_id=userService.getUserIdIfLogin();
+        int counts=0;
+        if(orderState==0){
+            counts=orderService.getUserOrderCounts(user_id);
+        }
+        else{
+            counts=orderService.getUserOrderCountsByState(user_id,orderState);
+        }
+        int start=(page-1)*pageSize;
+        List<Map<String,Object>> completeOrderList=new ArrayList<>();
+        if(start<counts){
+            completeOrderList=orderService.getUserOrder(user_id,start,pageSize,orderState);
+        }
+        Map<String,Object> resultOrder=new HashMap<>();
+        resultOrder.put("counts",counts);
+        resultOrder.put("page",page);
+        resultOrder.put("pageSize",pageSize);
+        resultOrder.put("items",completeOrderList);
+
+        return Result.success(resultOrder);
     }
 }

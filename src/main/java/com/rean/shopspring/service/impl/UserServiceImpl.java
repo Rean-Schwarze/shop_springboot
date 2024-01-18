@@ -5,10 +5,12 @@ import com.rean.shopspring.pojo.Address;
 import com.rean.shopspring.pojo.User;
 import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.Md5Util;
+import com.rean.shopspring.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -42,5 +44,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Address> getAddress(Integer id){
         return userMapper.getAddressByUserId(id);
+    }
+
+//    用户登录后，从ThreadLocalUtil中获取用户id
+    @Override
+    public int getUserIdIfLogin(){
+        Map<String, Object> u= ThreadLocalUtil.get();
+        return Integer.parseInt((String) u.get("id"));
     }
 }

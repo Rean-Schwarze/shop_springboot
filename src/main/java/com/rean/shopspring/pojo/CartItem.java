@@ -30,4 +30,5 @@ public class CartItem {
     private String payPrice;
     private String totalPrice;
     private String totalPayPrice;
+    private int user_id;
 }
