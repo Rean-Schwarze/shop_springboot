@@ -28,7 +28,10 @@ public class User {
     @NotEmpty
     @Email
     private String email;//邮箱
-//    private String userPic;//用户头像地址
+
+    private String phone;
+
+    private String avatar;//用户头像地址
 //    private String receiver;
 //    private String contact;
 //    private String address;

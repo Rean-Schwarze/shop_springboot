@@ -3,17 +3,26 @@ package com.rean.shopspring.service;
 import com.rean.shopspring.pojo.Address;
 import com.rean.shopspring.pojo.User;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface UserService {
     User findByUserName(String username);
 
-    void register(String username, String password,String email,String nickname,String receiver,String contact,String address);
+    User findByPhone(String phone);
 
-    void addAddress(String receiver,String contact,String address, Integer id);
+    boolean isEmailAndPhoneExists(String email,String phone);
+
+    void register(String username,String phone, String password,String email,String nickname,
+                  String receiver,String contact, String address,String region);
+
+    void addAddress(String receiver,String contact,String address, Integer id,String fullLocation);
 
     List<Address> getAddress(Integer id);
 
 //    用户登录后，从ThreadLocalUtil中获取用户id
     int getUserIdIfLogin();
+
+    //    上传用户头像
+    String uploadUserAvatar(String uploadFilename, InputStream in) throws Exception;
 }

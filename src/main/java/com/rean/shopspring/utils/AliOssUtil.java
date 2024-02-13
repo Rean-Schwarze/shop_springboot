@@ -16,25 +16,12 @@ public class AliOssUtil {
     private static final String ENDPOINT = "https://oss-cn-guangzhou.aliyuncs.com";
     // 从环境变量中获取访问凭证。运行本代码示例之前，请确保已设置环境变量OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。
     //EnvironmentVariableCredentialsProvider credentialsProvider = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
-    private static final String ACCESS_KEY_ID;
-    static String ackey_s="TFRBSTV0U0pwWm9ldkRLWTdzSm5jdkdn";
-    private static final byte[] ackey=ackey_s.getBytes();
-
-    static {
-        try {
-            ACCESS_KEY_ID = Base64Util.decryBASE64(ackey);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static final String ACCESS_KEY_SECRET="t9gJoHd7ncf2iyAsDwMBbeGZHYlx2e";
-    // 填写Bucket名称，例如examplebucket。
+//    private static String ACCESS_KEY_ID;
+//    private static String ACCESS_KEY_SECRET;
+    // 填写Bucket名称。
     private static final String BUCKET_NAME = "rean-shop-bucket";
 
-    public static String uploadFile(String objectName, InputStream in) throws Exception {
-
-
+    public static String uploadFile(String objectName, InputStream in, String ACCESS_KEY_ID, String ACCESS_KEY_SECRET) throws Exception {
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(ENDPOINT,ACCESS_KEY_ID, ACCESS_KEY_SECRET);
         String url = "";

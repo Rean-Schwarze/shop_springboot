@@ -1,44 +1,70 @@
 package com.rean.shopspring.service.impl;
 
+import com.rean.shopspring.mapper.FileMapper;
 import com.rean.shopspring.mapper.UserMapper;
 import com.rean.shopspring.pojo.Address;
 import com.rean.shopspring.pojo.User;
 import com.rean.shopspring.service.UserService;
+import com.rean.shopspring.utils.AliOssUtil;
 import com.rean.shopspring.utils.Md5Util;
 import com.rean.shopspring.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private FileMapper fileMapper;
     @Override
     public User findByUserName(String username) {
         return userMapper.findByUserName(username);
     }
 
     @Override
-    public void register(String username, String password,String email,String nickname,String receiver,String contact,String address) {
-        // 加密密码
-        String md5String= Md5Util.getMD5String(password);
-        // 添加
-        userMapper.add(username,md5String,email,nickname);
-        User u=userMapper.findByUserName(username);
-        addAddress(receiver,contact,address,u.getId());
+    public User findByPhone(String phone){return userMapper.findByPhone(phone);}
+
+    @Override
+    public boolean isEmailAndPhoneExists(String email,String phone){
+        if(userMapper.findByEmail(email)==null){
+            return userMapper.findByPhone(phone) == null;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean isNotEmpty(String s){
+        return s != null && !(Objects.equals(s, ""));
     }
 
     @Override
-    public void addAddress(String receiver, String contact, String address, Integer id) {
+    public void register(String username,String phone, String password,String email,String nickname,
+                         String receiver,String contact,String address,String region) {
+        // 加密密码
+        String md5String= Md5Util.getMD5String(password);
+        // 添加
+        userMapper.add(username,phone,md5String,email,nickname);
+        User u=userMapper.findByPhone(phone);
+        if(isNotEmpty(receiver) || isNotEmpty(contact) || isNotEmpty(address) || isNotEmpty(region)){
+            addAddress(receiver,contact,address,u.getId(),region);
+        }
+    }
+
+    @Override
+    public void addAddress(String receiver, String contact, String address, Integer id,String region) {
         Integer count= userMapper.getCountOfAddressByUserId(id);
         int isDefault=0;
         if (count==0){
             isDefault=1;
         }
-        userMapper.addAddressByUserId(id,receiver,contact,address,isDefault);
+        userMapper.addAddressByUserId(id,receiver,contact,address,isDefault,region);
     }
 
     @Override
@@ -51,5 +77,15 @@ public class UserServiceImpl implements UserService {
     public int getUserIdIfLogin(){
         Map<String, Object> u= ThreadLocalUtil.get();
         return Integer.parseInt((String) u.get("id"));
+    }
+
+    @Override
+    public String uploadUserAvatar(String uploadFilename, InputStream in) throws Exception {
+        int user_id=getUserIdIfLogin();
+        String ac_id=fileMapper.getACCESSKEYIDbyRamName("user");
+        String ac_sec=fileMapper.getACCESSKEYSECRETbyRamName("user");
+        String url = AliOssUtil.uploadFile(uploadFilename,in,ac_id,ac_sec);
+        userMapper.updateUserAvatar(user_id,url);
+        return url;
     }
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 public class Address {
     private String receiver;
     private String contact;
+    private String region;
     private String address;
     private boolean isDefault;
     private Integer user_id;

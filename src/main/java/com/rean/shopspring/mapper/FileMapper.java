@@ -30,4 +30,10 @@ public interface FileMapper {
 
     @Insert("insert into banner(imgUrl) value (#{url})")
     void addBannerPictures(String url);
+
+    @Select("select accessKeyId from oss_ackey_value where ram=#{ram}")
+    String getACCESSKEYIDbyRamName(String ram);
+
+    @Select("select accessKeySecret from oss_ackey_value where ram=#{ram}")
+    String getACCESSKEYSECRETbyRamName(String ram);
 }
