@@ -29,15 +29,27 @@ public interface UserMapper {
     Integer getCountOfAddressByUserId(Integer id);
 
     @Insert("insert into user_address(receiver, contact, address, isDefault, user_id, region) VALUES " +
-            "(#{receiver},#{contact},#{address},#{isDefault},#{id},#{region})")
-    void addAddressByUserId(Integer id,String receiver,String contact,String address,int isDefault,String region);
+            "(#{receiver},#{contact},#{address},#{isDefault},#{user_id},#{region})")
+    void addAddressByUserId(Integer user_id,String receiver,String contact,String address,int isDefault,String region);
 
     @Select("select * from user_address where user_id=#{id}")
     List<Address> getAddressByUserId(Integer id);
+
+    @Update("update user_address set isDefault=0 where user_id=#{user_id}")
+    void updateAddressAllNotDefaultByUserId(Integer user_id);
+
+    @Update("update user_address set isDefault=1 where user_id=#{user_id} and id=#{add_id}")
+    void updateAddressDefaultById(Integer user_id, Integer add_id);
 
     @Select("select email from user where id=#{id}")
     String getEmailByUserId(Integer id);
 
     @Update("update user set avatar=#{url} where id=#{user_id}")
     void updateUserAvatar(int user_id,String url);
+
+    @Select("select avatar from user where id=#{user_id}")
+    String getAvatarByUserId(int user_id);
+
+    @Update("update user set username=#{account}, nickname=#{nickname} where id=#{user_id}")
+    void updateUserBasicInfo(String account, String nickname, int user_id);
 }

@@ -4,6 +4,7 @@ import com.rean.shopspring.mapper.FileMapper;
 import com.rean.shopspring.mapper.UserMapper;
 import com.rean.shopspring.pojo.Address;
 import com.rean.shopspring.pojo.User;
+import com.rean.shopspring.pojo.UserModifyInfoRequest;
 import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.AliOssUtil;
 import com.rean.shopspring.utils.Md5Util;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +30,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByPhone(String phone){return userMapper.findByPhone(phone);}
+    public User findByPhone(String phone) {return userMapper.findByPhone(phone);}
+
+    @Override
+    public User findByEmail(String email) {return userMapper.findByEmail(email);}
 
     @Override
     public boolean isEmailAndPhoneExists(String email,String phone){
@@ -57,6 +62,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    @Override
+    public void addAddress(Address address){
+        int user_id=getUserIdIfLogin();
+        int isDefault=0;
+        if(address.isDefault()){
+            isDefault=1;
+            userMapper.updateAddressAllNotDefaultByUserId(user_id);
+        }
+        userMapper.addAddressByUserId(user_id,address.getReceiver(),address.getContact(),address.getAddress(),isDefault,address.getRegion());
+    }
+//    废弃
+//    添加收货地址（注册）
     @Override
     public void addAddress(String receiver, String contact, String address, Integer id,String region) {
         Integer count= userMapper.getCountOfAddressByUserId(id);
@@ -84,8 +102,21 @@ public class UserServiceImpl implements UserService {
         int user_id=getUserIdIfLogin();
         String ac_id=fileMapper.getACCESSKEYIDbyRamName("user");
         String ac_sec=fileMapper.getACCESSKEYSECRETbyRamName("user");
+
+        String avatar=userMapper.getAvatarByUserId(user_id);
+        if(!Objects.equals(avatar, "")){
+            String oldPath=avatar.split(".com/")[1];
+            System.out.println(oldPath);
+            boolean isSuccess=AliOssUtil.deleteFile(oldPath,ac_id,ac_sec);
+        }
         String url = AliOssUtil.uploadFile(uploadFilename,in,ac_id,ac_sec);
         userMapper.updateUserAvatar(user_id,url);
         return url;
+    }
+
+    @Override
+    public void modifyBasicInfo(UserModifyInfoRequest userModifyInfoRequest){
+        int user_id=getUserIdIfLogin();
+        userMapper.updateUserBasicInfo(userModifyInfoRequest.getAccount(),userModifyInfoRequest.getNickname(),user_id);
     }
 }

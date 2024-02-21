@@ -35,5 +35,7 @@ public class Result<T> {
         return new Result(0, message, null);
     }
 
-
+    public static <E> Result<E> error(String message,E result) {
+        return new Result<>(0, message, result);
+    }
 }

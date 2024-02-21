@@ -2,9 +2,7 @@ package com.rean.shopspring.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rean.shopspring.pojo.Address;
-import com.rean.shopspring.pojo.Result;
-import com.rean.shopspring.pojo.User;
+import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.JwtUtil;
 import com.rean.shopspring.utils.Md5Util;
@@ -31,17 +29,19 @@ public class UserController {
     private UserService userService;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+//    用户注册
     @PostMapping("/register")
-    public Result register(@RequestBody Map<String,String> user){
-        String username=user.get("account");
-        String phone=user.get("phone");
-        String password=user.get("password");
-        String email=user.get("email");
-        String nickname=user.get("nickname");
-        String receiver=user.get("receiver");
-        String contact=user.get("contact");
-        String region=user.get("region");
-        String address=user.get("address");
+    public Result register(@Validated @RequestBody UserRegisterRequest user){
+        String username=user.getAccount();
+        String phone=user.getPhone();
+        String password=user.getPassword();
+        String email=user.getEmail();
+        String nickname=user.getNickname();
+        String receiver=user.getReceiver();
+        String contact=user.getContact();
+        String region=user.getRegion();
+        String address=user.getAddress();
+
 
         if(username==null || Objects.equals(username, "")){
             username="用户"+phone.substring(0,3)+"***"+phone.substring(8,11);
@@ -61,17 +61,21 @@ public class UserController {
     }
 
 
+//    用户登录
     @PostMapping("/login")
     @ResponseBody
-    public Result<Map<String,Object>> login(@RequestBody Map<String,String> user) {
-        String username=user.get("account");
-        String password=user.get("password");
-        // 根据用户名查询用户
-        User loginUser=userService.findByUserName(username);
+    public Result<Map<String,Object>> login(@Validated @RequestBody UserLoginRequest user) {
+        String account=user.getAccount();
+        String password=user.getPassword();
+        // 查询用户
+        User loginUser=null;
+        User loginUserPhone=userService.findByPhone(account);
+        User loginUserEmail=userService.findByEmail(account);
         // 判断用户是否存在
-        if(loginUser==null){
-            return Result.error("用户名错误");
+        if(loginUserPhone==null && loginUserEmail==null){
+            return Result.error("邮箱或手机号错误");
         }
+        else loginUser = Objects.requireNonNullElse(loginUserPhone, loginUserEmail);
         // 用户存在，检查密码是否正确（要加密一下去比对）
         if(Md5Util.getMD5String(password).equals(loginUser.getPassword())){
             Map<String,Object> userMap=new HashMap<>();
@@ -90,11 +94,30 @@ public class UserController {
         return Result.error("密码错误");
     }
 
-    @RequestMapping("/address")
+//    获取用户收货地址
+    @GetMapping("/address")
     @ResponseBody
     public Result<List<Address>> getAddress(){
         Map<String, Object> u= ThreadLocalUtil.get();
         Integer user_id= Integer.parseInt((String) u.get("id"));
         return Result.success(userService.getAddress(user_id));
     }
+
+//    添加收货地址
+    @PostMapping("/address")
+    @ResponseBody
+    public Result addAddress(@Validated @RequestBody Address address){
+        userService.addAddress(address);
+        return Result.success();
+    }
+
+
+    @PostMapping("/modify/basic")
+    @ResponseBody
+    public Result modifyBasicInfo(@Validated @RequestBody UserModifyInfoRequest userModifyInfoRequest){
+        userService.modifyBasicInfo(userModifyInfoRequest);
+        return Result.success();
+    }
+
+
 }
