@@ -41,6 +41,9 @@ public interface UserMapper {
     @Update("update user_address set isDefault=1 where user_id=#{user_id} and id=#{add_id}")
     void updateAddressDefaultById(Integer user_id, Integer add_id);
 
+    @Update("update user_address set receiver=#{receiver}, contact=#{contact}, region=#{region}, address=#{address}, isDefault=#{isDefault} where id=#{add_id} and user_id=#{user_id}")
+    void updateAddressById(Integer user_id, Integer add_id,String receiver,String contact,String region,String address,int isDefault);
+
     @Select("select email from user where id=#{id}")
     String getEmailByUserId(Integer id);
 

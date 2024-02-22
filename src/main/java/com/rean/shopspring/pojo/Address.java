@@ -1,5 +1,6 @@
 package com.rean.shopspring.pojo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class Address {
     @Pattern(regexp = "[^^#*%&',;=?\\s$\\x22]+", message = "不能含有非法字符")
     private String address;
 
+    @JsonProperty("isDefault")
     private boolean isDefault;
 //    private Integer user_id;
 //    @NotEmpty

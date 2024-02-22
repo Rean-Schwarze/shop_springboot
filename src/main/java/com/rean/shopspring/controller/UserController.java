@@ -37,10 +37,6 @@ public class UserController {
         String password=user.getPassword();
         String email=user.getEmail();
         String nickname=user.getNickname();
-        String receiver=user.getReceiver();
-        String contact=user.getContact();
-        String region=user.getRegion();
-        String address=user.getAddress();
 
 
         if(username==null || Objects.equals(username, "")){
@@ -52,7 +48,7 @@ public class UserController {
         boolean isExists=userService.isEmailAndPhoneExists(email,phone);
         if (isExists){
             // 没有被占用
-            userService.register(username,phone,password,email,nickname,receiver,contact,address,region);
+            userService.register(username,phone,password,email,nickname);
             return Result.success();
         }else{
             return Result.error("邮箱或手机号已被占用");
@@ -119,5 +115,10 @@ public class UserController {
         return Result.success();
     }
 
-
+    @PostMapping("/modify/address")
+    @ResponseBody
+    public Result modifyAddress(@Validated @RequestBody Address address){
+        userService.modifyAddress(address);
+        return Result.success();
+    }
 }

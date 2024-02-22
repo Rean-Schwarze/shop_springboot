@@ -16,8 +16,7 @@ public interface UserService {
 
     boolean isEmailAndPhoneExists(String email,String phone);
 
-    void register(String username,String phone, String password,String email,String nickname,
-                  String receiver,String contact, String address,String region);
+    void register(String username,String phone, String password,String email,String nickname);
 
     //    添加收货地址
     void addAddress(Address address);
@@ -33,4 +32,7 @@ public interface UserService {
 
 //    修改基本信息
     void modifyBasicInfo(UserModifyInfoRequest userModifyInfoRequest);
+
+//    修改收货地址
+    void modifyAddress(Address address);
 }

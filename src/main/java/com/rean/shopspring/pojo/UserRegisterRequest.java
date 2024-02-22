@@ -28,19 +28,19 @@ public class UserRegisterRequest {
     @Pattern(regexp = "^\\d{11}$", message = "请填写正确的手机号")
     private String phone;
 
-    @NotEmpty(message = "请输入收件人姓名")
-    @Pattern(regexp = "[^^#*%&',;=?\\s$\\x22]+", message = "收货人姓名不能含有非法字符")
-    private String receiver;
-
-    @NotEmpty(message = "请输入收货人手机号")
-    @Pattern(regexp = "^\\d{11}$", message = "请填写正确的手机号")
-    private String contact;
-
-    @NotEmpty(message = "请输入收货地址（区域）")
-    @Pattern(regexp = "[^^#*%&',;=?$\\x22]+", message = "收货地址（区域）不能含有非法字符")
-    private String region;
-
-    @NotEmpty(message = "请输入收货地址（详细）")
-    @Pattern(regexp = "[^^#*%&',;=?\\s$\\x22]+", message = "收货地址（详细）不能含有非法字符")
-    private String address;
+//    @NotEmpty(message = "请输入收件人姓名")
+//    @Pattern(regexp = "[^^#*%&',;=?\\s$\\x22]+", message = "收货人姓名不能含有非法字符")
+//    private String receiver;
+//
+//    @NotEmpty(message = "请输入收货人手机号")
+//    @Pattern(regexp = "^\\d{11}$", message = "请填写正确的手机号")
+//    private String contact;
+//
+//    @NotEmpty(message = "请输入收货地址（区域）")
+//    @Pattern(regexp = "[^^#*%&',;=?$\\x22]+", message = "收货地址（区域）不能含有非法字符")
+//    private String region;
+//
+//    @NotEmpty(message = "请输入收货地址（详细）")
+//    @Pattern(regexp = "[^^#*%&',;=?\\s$\\x22]+", message = "收货地址（详细）不能含有非法字符")
+//    private String address;
 }

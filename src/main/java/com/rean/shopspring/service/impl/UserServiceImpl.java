@@ -50,16 +50,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(String username,String phone, String password,String email,String nickname,
-                         String receiver,String contact,String address,String region) {
+    public void register(String username,String phone, String password,String email,String nickname) {
         // 加密密码
         String md5String= Md5Util.getMD5String(password);
         // 添加
         userMapper.add(username,phone,md5String,email,nickname);
         User u=userMapper.findByPhone(phone);
-        if(isNotEmpty(receiver) || isNotEmpty(contact) || isNotEmpty(address) || isNotEmpty(region)){
-            addAddress(receiver,contact,address,u.getId(),region);
-        }
     }
 
 
@@ -118,5 +114,16 @@ public class UserServiceImpl implements UserService {
     public void modifyBasicInfo(UserModifyInfoRequest userModifyInfoRequest){
         int user_id=getUserIdIfLogin();
         userMapper.updateUserBasicInfo(userModifyInfoRequest.getAccount(),userModifyInfoRequest.getNickname(),user_id);
+    }
+
+    @Override
+    public void modifyAddress(Address address){
+        int user_id=getUserIdIfLogin();
+        int isDefault=0;
+        if(address.isDefault()){
+            isDefault=1;
+            userMapper.updateAddressAllNotDefaultByUserId(user_id);
+        }
+        userMapper.updateAddressById(user_id,address.getId(),address.getReceiver(),address.getContact(),address.getRegion(),address.getAddress(),isDefault);
     }
 }
