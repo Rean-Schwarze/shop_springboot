@@ -101,9 +101,10 @@ public class UserServiceImpl implements UserService {
 
         String avatar=userMapper.getAvatarByUserId(user_id);
         if(!Objects.equals(avatar, "")){
-            String oldPath=avatar.split(".com/")[1];
-            System.out.println(oldPath);
-            boolean isSuccess=AliOssUtil.deleteFile(oldPath,ac_id,ac_sec);
+            if(!(avatar ==null)){
+                String oldPath=avatar.split(".com/")[1];
+                boolean isSuccess=AliOssUtil.deleteFile(oldPath,ac_id,ac_sec);
+            }
         }
         String url = AliOssUtil.uploadFile(uploadFilename,in,ac_id,ac_sec);
         userMapper.updateUserAvatar(user_id,url);
