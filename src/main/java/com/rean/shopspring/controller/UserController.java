@@ -71,6 +71,7 @@ public class UserController {
         // 用户存在，检查密码是否正确（要加密一下去比对）
         if(Md5Util.getMD5String(password).equals(loginUser.getPassword())){
             Map<String,Object> userMap=new HashMap<>();
+            userMap.put("type","user");
             userMap.put("id",loginUser.getId().toString());
             userMap.put("account",loginUser.getUsername());
             userMap.put("nickname",loginUser.getNickname());
@@ -80,7 +81,7 @@ public class UserController {
             userMap.put("token",token);
             //把token存储到redis中
             ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-            operations.set(token,token,12, TimeUnit.HOURS);
+            operations.set(token,"userId: "+loginUser.getId().toString(),12, TimeUnit.HOURS);
             return Result.success(userMap);
         }
         return Result.error("密码错误");

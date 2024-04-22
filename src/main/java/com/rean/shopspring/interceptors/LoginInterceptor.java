@@ -25,8 +25,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         try {
             //从redis中获取相同的token
             ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-            String redisToken = operations.get(token);
-            if (redisToken==null){
+            String redisTokenValue = operations.get(token);
+            if (redisTokenValue==null){
                 //token已经失效了
                 throw new RuntimeException();
             }
