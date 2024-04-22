@@ -1,17 +1,13 @@
 package com.rean.shopspring.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.JwtUtil;
 import com.rean.shopspring.utils.Md5Util;
 import com.rean.shopspring.utils.ThreadLocalUtil;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
