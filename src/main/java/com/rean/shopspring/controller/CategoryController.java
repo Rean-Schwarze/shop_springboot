@@ -27,6 +27,6 @@ public class CategoryController {
         String page= map.get("page");
         String pageSize= map.get("pageSize");
         String sortField= map.get("sortField");
-        return Result.success(categoryService.getSubCategory(categoryId,page,pageSize,sortField));
+        return Result.success(categoryService.getSubCategoryAndGoods(categoryId,page,pageSize,sortField));
     }
 }

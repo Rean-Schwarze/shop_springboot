@@ -29,7 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Map<String,Object> getSubCategory(String categoryId,String page,String pageSize,String sortField)
+    public Map<String,Object> getSubCategoryAndGoods(String categoryId, String page, String pageSize, String sortField)
     {
         Map<String,Object> result=new HashMap<>();
         result.put("page",page);
