@@ -6,13 +6,14 @@ import com.rean.shopspring.pojo.Category;
 import com.rean.shopspring.pojo.Goods;
 
 import java.util.List;
+import java.util.Map;
 
 public interface HomeService {
-    List<Category> getAllCategories();
+    List<Map<String,Object>> getAllCategories();
 
     List<Goods> getNewGoods(Integer limit);
 
     List<Banner> getBanners();
 
-    Category getSubCategoriesById(Integer id);
+    Map<String,Object> getSubCategoriesById(Integer id);
 }

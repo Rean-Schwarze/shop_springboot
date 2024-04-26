@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/home")
@@ -22,8 +23,8 @@ public class HomeController {
 
     @RequestMapping("/category/head")
     @ResponseBody
-    public Result<List<Category>> getAllCategories(){
-        List<Category> categoryList=homeService.getAllCategories();
+    public Result<List<Map<String,Object>>> getAllCategories(){
+        List<Map<String,Object>> categoryList=homeService.getAllCategories();
         return Result.success(categoryList);
     }
 
@@ -43,8 +44,8 @@ public class HomeController {
 
     @RequestMapping("/category")
     @ResponseBody
-    public Result<Category> getSubCategories(@RequestParam("id") String id){
-        Category category=homeService.getSubCategoriesById(Integer.parseInt(id));
+    public Result<Map<String,Object>> getSubCategories(@RequestParam("id") String id){
+        Map<String,Object> category=homeService.getSubCategoriesById(Integer.parseInt(id));
         return Result.success(category);
     }
 }

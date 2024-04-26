@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
         Integer pages= count/Integer.parseInt(pageSize);
         result.put("pages",pages);
         List<Goods> item=new LinkedList<>();
-        List<Goods> goods=new LinkedList<>();
+        List<Goods> goods;
         Integer real_page=Integer.parseInt(page)-1;
         if (real_page>pages){
             result.put("item",item);

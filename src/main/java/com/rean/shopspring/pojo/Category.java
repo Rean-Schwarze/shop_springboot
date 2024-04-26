@@ -14,5 +14,5 @@ public class Category {
     private String picture;
     private Integer parent_id;
     private List<Category> children;
-    private List<Goods> goods;
+//    private List<Goods> goods;
 }
