@@ -13,5 +13,8 @@ public class Sku {
     private String price;
     private String oldPrice;
     private Integer inventory;
+    private Integer salesCount;
+    private Integer oldSalesCount;
+    private Integer salesVolume;
     private List<Spec_sku> specs;
 }

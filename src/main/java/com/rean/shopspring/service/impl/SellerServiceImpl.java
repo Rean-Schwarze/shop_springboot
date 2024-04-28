@@ -1,6 +1,7 @@
 package com.rean.shopspring.service.impl;
 
 import com.rean.shopspring.mapper.CategoryMapper;
+import com.rean.shopspring.mapper.GoodsMapper;
 import com.rean.shopspring.mapper.SellerMapper;
 import com.rean.shopspring.pojo.Category;
 import com.rean.shopspring.pojo.Seller;
@@ -17,11 +18,14 @@ public class SellerServiceImpl implements SellerService {
     private SellerMapper sellerMapper;
     @Autowired
     private CategoryMapper categoryMapper;
+    @Autowired
+    private GoodsMapper goodsMapper;
     @Override
     public Seller findByName(String name){
         return sellerMapper.findByName(name);
     }
 
+    // 获取负责的分类
     @Override
     public List<Category> getSellCategory(int seller_id){
         List<Category> categoryList=new ArrayList<>();
@@ -62,5 +66,12 @@ public class SellerServiceImpl implements SellerService {
         }
 
         return categoryList;
+    }
+
+    // 获取负责分类下的商品id列表
+    public List<Integer> getSellGoodsId(int seller_id, int category_id){
+        // 首先获取品牌id
+        Integer brand_id=sellerMapper.getSellBrandId(seller_id);
+        return goodsMapper.getGoodsIdByBrandAndCategory(brand_id,category_id);
     }
 }

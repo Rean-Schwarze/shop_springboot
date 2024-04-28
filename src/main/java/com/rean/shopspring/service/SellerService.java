@@ -9,4 +9,6 @@ public interface SellerService {
     Seller findByName(String name);
 
     List<Category> getSellCategory(int seller_id);
+
+    List<Integer> getSellGoodsId(int seller_id, int category_id);
 }

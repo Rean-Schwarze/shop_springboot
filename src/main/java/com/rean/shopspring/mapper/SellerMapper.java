@@ -16,6 +16,6 @@ public interface SellerMapper {
     @Select("select * from seller_categories where seller_id=#{seller_id}")
     List<Seller_categories> getSellCategory(Integer seller_id);
 
-//    @Select("select * from category where id in (select * from )")
-//    List<Category> getSellCategory(int seller_id);
+    @Select("select brand_id from seller where id=#{seller_id}")
+    Integer getSellBrandId(Integer seller_id);
 }

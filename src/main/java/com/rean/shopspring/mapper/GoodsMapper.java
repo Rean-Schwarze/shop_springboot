@@ -21,6 +21,10 @@ public interface GoodsMapper {
     })
     Goods getGoodsById(Integer id);
 
+    // 获取商品id（传入：品牌id、分类id）
+    @Select("select id from goods where brand_id=#{brand_id} and category_id=#{category_id}")
+    List<Integer> getGoodsIdByBrandAndCategory(Integer brand_id,Integer category_id);
+
     @Select("select * from brand where id=#{id}")
     Brand getBrandById(Integer id);
 
