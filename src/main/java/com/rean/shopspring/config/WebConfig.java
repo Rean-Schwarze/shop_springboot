@@ -1,6 +1,7 @@
 package com.rean.shopspring.config;
 
 import com.rean.shopspring.interceptors.LoginInterceptor;
+import com.rean.shopspring.interceptors.SellerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -13,12 +14,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
+    @Autowired
+    private SellerInterceptor sellerInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //登录接口和注册接口不拦截
         registry.addInterceptor(loginInterceptor).excludePathPatterns("/user/login","/user/register","/upload",
                 "/home/category/head","/home/new","/home/banner","/home/category","/home/goods","/goods","/category/sub/filter",
                 "/category/goods/temporary","/pay/**","/paycallback","/seller/login");
+        registry.addInterceptor(sellerInterceptor).addPathPatterns("/seller/**").excludePathPatterns("/seller/login");
     }
 
     @Override
