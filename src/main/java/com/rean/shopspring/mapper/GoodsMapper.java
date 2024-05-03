@@ -6,10 +6,15 @@ import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.type.JdbcType;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
 public interface GoodsMapper {
+
+//    ----------------------------------------
+//    获取相关
+//    ----------------------------------------
 
     @Select("select * from goods where id=#{id}")
     @Results({
@@ -31,29 +36,30 @@ public interface GoodsMapper {
     @Select("select * from main_pictures where goods_id=#{id}")
     List<String> getMainPicturesByGoodsId(Integer id);
 
-    @Select("select * from specs where id=(select specs_id from goods_specs where goods_id=#{id})")
+    @Select("select * from specs where goods_id=#{id}")
     List<Specs> getSpcesByGoodsId(Integer id);
 
     @Select("select * from specs_values where specs_id=#{id}")
     List<Spec_values> getSpcesValueBySpecsId(String id);
 
+    // 废弃
     @Select("select * from specs_values where id=(select specs_values_id from specs_values_sku where sku_id=#{id})")
-    Spec_values getSpecValuesBySkuId(String id);
+    Spec_values getSpecValuesBySkuId(Integer id);
 
     @Select("select price from sku where id=#{id}")
-    String getPriceBySkuId(String id);
+    String getPriceBySkuId(Integer id);
 
     @Select("select inventory from sku where id=#{id}")
-    int getInventoryBySkuId(String id);
+    int getInventoryBySkuId(Integer id);
 
-    @Update("update sku set inventory=#{count} where id=#{id}")
-    void updateSkuInventory(String id,int count);
-
-    @Select("select * from sku where id in (select sku_id from specs_values_sku where goods_id=#{id})")
+    @Select("select * from sku where goods_id=#{id}")
     List<Sku> getSkuByGoodsId(String id);
 
-    @Select("select * from specs_values where id=(select specs_values_id from specs_values_sku where sku_id=#{id})")
-    List<Spec_values> getSkuSpecBySkuId(String id);
+    @Select("select * from specs_values where id = (select specs_values_id from sku where id=#{id})")
+    Spec_values getSkuSpecBySkuId(Integer id);
+
+    @Select("select * from specs_values where id = (select specs_values_id2 from sku where id=#{id})")
+    Spec_values getSkuSpecBySkuId_2(Integer id);
 
     @Select("select name from specs where id=(select specs_id from specs_values where id=#{id})")
     String getSpecNameBySpceValueId(Integer id);
@@ -79,6 +85,54 @@ public interface GoodsMapper {
     int getGoodsCount();
 
 //    根据skuId获取单个商品的封面、描述、名称
-    @Select("select picture,name,`desc` from goods where id=(select goods_id from specs_values_sku where sku_id=#{skuId})")
-    Goods getGoodsBySkuId(String skuId);
+    @Select("select picture,name,`desc` from goods where id=(select goods_id from sku where id=#{skuId})")
+    Goods getGoodsBySkuId(Integer skuId);
+
+//    ----------------------------------------
+//    添加相关
+//    ----------------------------------------
+
+    // 添加商品（除图片&规格）
+    // 返回自增id
+    @Insert("insert into goods(name,`desc`,brand_id,category_id,sub_category_id,sub_category_id2," +
+            "isPreSale,is_new,is_on_sale,svd_name,pubTime,add_seller) values(#{name},#{desc},#{brand_id}," +
+            "#{category_id},#{sub_id},#{sub_id2},#{isPreSale},#{isNew},#{isOnSale},#{svd_name},#{pubTime},#{seller_id})")
+    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
+    int addGoods(String name, String desc, Integer brand_id, Integer category_id, Integer sub_id, Integer sub_id2,
+                  boolean isPreSale, boolean isNew, boolean isOnSale, String svd_name, Timestamp pubTime, Integer seller_id);
+
+    // 添加规格
+    @Insert("insert into specs(name,goods_id) values (#{name},#{goods_id})")
+    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
+    int addSpecs(String name,Integer goods_id);
+
+    // 添加具体规格
+    @Insert("insert into specs_values(name,picture,`desc`,specs_id,goods_id) values (#{name},#{picture},#{desc}," +
+            "#{specs_id},#{goods_id})")
+    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
+    int addSpecsValues(String name,String picture,String desc, Integer spces_id,Integer goods_id);
+
+    // 添加sku（单规格）
+    @Insert("insert into sku (price,inventory,specs_values_id,goods_id) values (#{price},#{inventory}," +
+            "#{specs_values_id},#{goods_id});")
+//    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
+    void addSkuSingle(String price, Integer inventory, Integer specs_values_id,Integer goods_id);
+
+    // 添加sku（双规格）
+    @Insert("insert into sku (price,inventory,specs_values_id,specs_values_id2,goods_id) values (#{price},#{inventory}," +
+            "#{specs_values_id},#{specs_values_id2},#{goods_id});")
+    void addSkuDouble(String price, Integer inventory, Integer specs_values_id,Integer specs_values_id2,Integer goods_id);
+
+//    ----------------------------------------
+//    修改相关
+//    ----------------------------------------
+
+    // 修改库存
+    @Update("update sku set inventory=#{count} where id=#{id}")
+    void updateSkuInventory(Integer id,int count);
+
+    // 修改goods表内商品价格
+    @Update("update goods set price=#{price}, oldPrice=#{oldPrice} where id=#{id}")
+    void updateGoodsPrice(String price,String oldPrice, Integer id);
+
 }

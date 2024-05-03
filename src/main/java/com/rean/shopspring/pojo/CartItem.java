@@ -15,7 +15,7 @@ public class CartItem {
     private String id; // 商品id
     private String price;
     private Integer count;
-    private String skuId;
+    private int skuId;
     private String name;
     private String attrsText; // 商品属性
     private List<String> specs;

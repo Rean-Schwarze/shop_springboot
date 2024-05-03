@@ -18,7 +18,7 @@ public class CartController {
     @RequestMapping("/member/cart")
     @ResponseBody
     public Result<CartItem> addCart(@RequestBody Map<String,String> orderItem){
-        return Result.success(cartService.addCart(Integer.parseInt(orderItem.get("id")),orderItem.get("skuId"),
+        return Result.success(cartService.addCart(Integer.parseInt(orderItem.get("id")), Integer.valueOf(orderItem.get("skuId")),
                 Integer.parseInt(orderItem.get("count"))));
     }
 
@@ -41,7 +41,7 @@ public class CartController {
     @RequestMapping("/member/cart/delete")
     @ResponseBody
     public Result deleteCart(@RequestBody Map<String,Object> list){
-        List<String> skuIds= (List<String>) list.get("ids");
+        List<Integer> skuIds= (List<Integer>) list.get("ids");
         boolean flag= cartService.deleteCartList(skuIds);
         if(flag){
             return Result.success();

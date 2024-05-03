@@ -24,13 +24,33 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private UserService userService;
 
+    // 获取描述规格属性的文字（传入：skuId）
+    //（例：颜色分类：浅驼色 尺码：M[85-110斤]）
+    private String joinAttrsText(Integer skuId){
+        List<Spec_values> spec_values=new ArrayList<>();
+        Spec_values tmp=goodsMapper.getSkuSpecBySkuId(skuId);
+        if(tmp!=null){
+            spec_values.add(tmp);
+        }
+        tmp=goodsMapper.getSkuSpecBySkuId_2(skuId);
+        if(tmp!=null){
+            spec_values.add(tmp);
+        }
+        List<String> attrsTexts=new ArrayList<>();
+        for(Spec_values values:spec_values){
+            if(values!=null){
+                String spec_name=goodsMapper.getSpecNameBySpceValueId(values.getId());
+                attrsTexts.add(spec_name+"："+values.getName());
+            }
+        }
+        return String.join("\t",attrsTexts);
+    }
+
     @Override
-    public CartItem addCart(Integer id,String skuId,Integer count){
+    public CartItem addCart(Integer id,Integer skuId,Integer count){
         Goods goods=goodsMapper.getGoodsById(id);
 
-        Spec_values spec_values=goodsMapper.getSpecValuesBySkuId(skuId);
-        String spec_name=goodsMapper.getSpecNameBySpceValueId(Integer.valueOf(spec_values.getId()));
-        String attrsText=spec_name+"："+spec_values.getName();
+        String attrsText=joinAttrsText(skuId);
 
         int postFee=0;
         String price= String.valueOf(cartMapper.getPriceBySkuId(skuId));
@@ -60,9 +80,7 @@ public class CartServiceImpl implements CartService {
             Goods goods=goodsMapper.getGoodsById(Integer.parseInt(item.getId()));
             item.setName(goods.getName());
 
-            Spec_values spec_values=goodsMapper.getSpecValuesBySkuId(item.getSkuId());
-            String spec_name=goodsMapper.getSpecNameBySpceValueId(Integer.valueOf(spec_values.getId()));
-            String attrsText=spec_name+"："+spec_values.getName();
+            String attrsText=joinAttrsText(item.getSkuId());
             item.setAttrsText(attrsText);
 
             goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goods.getId())));
@@ -93,10 +111,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<CartItem> getCartList(List<String> skus){
+    public List<CartItem> getCartList(List<Integer> skus){
         int user_id=userService.getUserIdIfLogin();
         List<CartItem> cartItemList=new ArrayList<>();
-        for(String sku:skus){
+        for(Integer sku:skus){
             cartItemList.add(cartMapper.getCartListByUserIdAndSkuId(user_id,sku));
         }
 
@@ -111,7 +129,7 @@ public class CartServiceImpl implements CartService {
         Integer user_id= Integer.parseInt((String) u.get("id"));
         for(Map<String,Object> cart:cartList){
             Integer count= (Integer) cart.get("count");
-            String skuId=(String) cart.get("skuId");
+            Integer skuId=(Integer) cart.get("skuId");
             Integer SkuIdCount=cartMapper.getSkuIdCount(skuId,user_id);
             if(SkuIdCount==0){
                 Integer goods_id=cartMapper.getGoodsIdBySkuId(skuId);
@@ -124,11 +142,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public boolean deleteCartList(List<String> list){
+    public boolean deleteCartList(List<Integer> list){
         Map<String, Object> u=ThreadLocalUtil.get();
         Integer user_id=Integer.parseInt((String) u.get("id")) ;
         try{
-            for(String id:list){
+            for(Integer id:list){
                 cartMapper.deleteBySkuIdAndUserId(id,user_id);
             }
             return true;

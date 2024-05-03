@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class Sku {
-    private String id;
+    private Integer id;
     private String skuCode;
     @NotEmpty
     private String price;
@@ -20,6 +20,9 @@ public class Sku {
     private Integer salesCount;
     private Integer oldSalesCount;
     private Integer salesVolume;
+    private int specsValuesId;
+    private int specsValuesId2;
+    private int goodsId;
     @NotNull
     private List<Spec_sku> specs;
 }

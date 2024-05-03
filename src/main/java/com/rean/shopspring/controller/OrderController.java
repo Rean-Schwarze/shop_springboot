@@ -26,10 +26,10 @@ public class OrderController {
     @RequestMapping("/member/order/pre")
     @ResponseBody
 //    获取预处理订单（计算总价）
-    public Result<Map<String,Object>> generateOrderPre(@RequestBody Map<String,List<String>> body){
+    public Result<Map<String,Object>> generateOrderPre(@RequestBody Map<String,List<Integer>> body){
         int user_id=userService.getUserIdIfLogin();
         List<Address> userAddresses=userService.getAddress(user_id);
-        List<String> skus=body.get("skus");
+        List<Integer> skus=body.get("skus");
         List<CartItem> goods=cartService.getCartList(skus);
         Integer goodsCount=0;
         int totalPrice=0;

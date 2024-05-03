@@ -34,10 +34,18 @@ public class GoodsServiceImpl implements GoodsService {
 //        获取skus
         List<Sku> skus=goodsMapper.getSkuByGoodsId(goods.getId());
         for(Sku sku:skus){
-            List<Spec_values> spec_values=goodsMapper.getSkuSpecBySkuId(sku.getId());
+            List<Spec_values> spec_values=new ArrayList<>();
+            Spec_values tmp=goodsMapper.getSkuSpecBySkuId(sku.getId());
+            if(tmp!=null){
+                spec_values.add(tmp);
+            }
+            tmp=goodsMapper.getSkuSpecBySkuId_2(sku.getId());
+            if(tmp!=null){
+                spec_values.add(tmp);
+            }
             List<Spec_sku> sk=new LinkedList<Spec_sku>();
             for(Spec_values sv:spec_values){
-                Spec_sku ss=new Spec_sku(goodsMapper.getSpecNameBySpceValueId(Integer.parseInt(sv.getId())),sv.getName());
+                Spec_sku ss=new Spec_sku(goodsMapper.getSpecNameBySpceValueId(sv.getId()),sv.getName());
                 sk.add(ss);
             }
             sku.setSpecs(sk);

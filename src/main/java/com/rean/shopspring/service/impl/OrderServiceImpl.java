@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
         int totalNum=0;
         for(Map<String,Object> good:goods){
             int count= (int)good.get("count");
-            String skuId= (String) good.get("skuId");
+            Integer skuId= (Integer) good.get("skuId");
 
 //            将订单中每项商品信息单独存储
             CartItem cartItem=cartMapper.getCartListByUserIdAndSkuId(user_id,skuId);

@@ -60,7 +60,7 @@ public interface OrderMapper {
 
 //    插入订单中每项商品的skuId
     @Insert("insert into order_item(order_id,skuId,user_id,count,goods_id) values (#{order_id},#{skuId},#{user_id},#{count},#{goods_id})")
-    void InsertOrderItem(int order_id, String skuId, int user_id, int count, int goods_id);
+    void InsertOrderItem(int order_id, Integer skuId, int user_id, int count, int goods_id);
 
     @Select("select * from order_item where user_id=#{user_id} and order_id=#{order_id}")
     List<OrderItem> getOrderItemByUserIdAndOrderId(int user_id, int order_id);

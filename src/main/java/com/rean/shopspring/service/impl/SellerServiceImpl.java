@@ -3,9 +3,7 @@ package com.rean.shopspring.service.impl;
 import com.rean.shopspring.mapper.CategoryMapper;
 import com.rean.shopspring.mapper.GoodsMapper;
 import com.rean.shopspring.mapper.SellerMapper;
-import com.rean.shopspring.pojo.Category;
-import com.rean.shopspring.pojo.Seller;
-import com.rean.shopspring.pojo.Seller_categories;
+import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,5 +71,52 @@ public class SellerServiceImpl implements SellerService {
         // 首先获取品牌id
         Integer brand_id=sellerMapper.getSellBrandId(seller_id);
         return goodsMapper.getGoodsIdByBrandAndCategory(brand_id,category_id);
+    }
+
+    // 添加商品
+    public boolean addGoods(int seller_id, SellerGoodsRequest request){
+        // 首先获取品牌id
+        Integer brand_id=sellerMapper.getSellBrandId(seller_id);
+
+        int id=goodsMapper.addGoods(request.getName(), request.getDesc(),brand_id,request.getCategory(),
+                request.getSubCategory(),request.getSubCategory2(),
+                request.isPreSale(), request.isNew(), request.isOnSale(),
+                request.getSvdName(),request.getPubTime(),seller_id);
+
+        // 添加规格
+        Map<String,Map<String,Integer>> specs_map=new HashMap<>();
+        for(Specs specs:request.getSpecs()){
+            int specs_id=goodsMapper.addSpecs(specs.getName(),id);
+            // 添加具体规格
+            Map<String,Integer> specs_values_map=new HashMap<>();
+            for(Spec_values spec_values:specs.getValues()){
+                int value_id= goodsMapper.addSpecsValues(spec_values.getName(),spec_values.getPicture(),spec_values.getDesc(),specs_id,id);
+                specs_values_map.put(spec_values.getName(),value_id);
+            }
+            specs_map.put(specs.getName(),specs_values_map);
+        }
+
+        // 添加sku
+        int minPrice=Integer.MAX_VALUE;
+        for(Sku sku: request.getSkus()){
+            // 计算最低价格
+            minPrice=Integer.min(Integer.parseInt(sku.getPrice()),minPrice);
+            List<Spec_sku> spec_skus=sku.getSpecs();
+            List<Integer> values=new ArrayList<>();
+            for(Spec_sku spec_sku:spec_skus){
+                values.add(specs_map.get(spec_sku.getName()).get(spec_sku.getValueName()));
+            }
+            if(values.size()==1){
+                goodsMapper.addSkuSingle(sku.getPrice(),sku.getInventory(),values.get(0),id);
+            }
+            else{
+                goodsMapper.addSkuDouble(sku.getPrice(),sku.getInventory(),values.get(0),values.get(1),id);
+            }
+        }
+
+        // 修改goods价格
+        goodsMapper.updateGoodsPrice(String.valueOf(minPrice),String.valueOf(minPrice),id);
+
+        return true;
     }
 }

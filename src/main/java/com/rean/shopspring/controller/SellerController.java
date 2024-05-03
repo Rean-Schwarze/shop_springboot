@@ -106,8 +106,16 @@ public class SellerController {
 
     @PostMapping("/goods")
     @ResponseBody
-    public Result addGoods(@Validated @RequestBody Map<String,Object> request){
+    public Result addGoods(@Validated @RequestBody SellerGoodsRequest request){
         Map<String,Object> sellerMap=ThreadLocalUtil.get();
+        Integer seller_id= (Integer) sellerMap.get("id");
+        // 检查specs、sku里的specs数目
+        int specs_size=request.getSpecs().size();
+        if(specs_size>2){ return Result.error("规格数目超出限制"); }
+        for(Sku sku: request.getSkus()){
+            if(sku.getSpecs().size()!=specs_size){ return Result.error("规格数目不符"); }
+        }
+        sellerService.addGoods(seller_id,request);
         return Result.success();
     }
 }
