@@ -78,19 +78,26 @@ public class SellerServiceImpl implements SellerService {
         // 首先获取品牌id
         Integer brand_id=sellerMapper.getSellBrandId(seller_id);
 
-        int id=goodsMapper.addGoods(request.getName(), request.getDesc(),brand_id,request.getCategory(),
-                request.getSubCategory(),request.getSubCategory2(),
-                request.isPreSale(), request.isNew(), request.isOnSale(),
-                request.getSvdName(),request.getPubTime(),seller_id);
+        request.setAddSeller(seller_id);
+        request.setBrandId(brand_id);
+
+        goodsMapper.addGoods(request);
+
+        int id=request.getId();
 
         // 添加规格
         Map<String,Map<String,Integer>> specs_map=new HashMap<>();
         for(Specs specs:request.getSpecs()){
-            int specs_id=goodsMapper.addSpecs(specs.getName(),id);
+            specs.setGoodsId(id);
+            goodsMapper.addSpecs(specs);
+            int specs_id=specs.getId();
             // 添加具体规格
             Map<String,Integer> specs_values_map=new HashMap<>();
             for(Spec_values spec_values:specs.getValues()){
-                int value_id= goodsMapper.addSpecsValues(spec_values.getName(),spec_values.getPicture(),spec_values.getDesc(),specs_id,id);
+                spec_values.setGoodsId(id);
+                spec_values.setSpecsId(specs_id);
+                goodsMapper.addSpecsValues(spec_values);
+                int value_id=spec_values.getId();
                 specs_values_map.put(spec_values.getName(),value_id);
             }
             specs_map.put(specs.getName(),specs_values_map);
@@ -106,12 +113,15 @@ public class SellerServiceImpl implements SellerService {
             for(Spec_sku spec_sku:spec_skus){
                 values.add(specs_map.get(spec_sku.getName()).get(spec_sku.getValueName()));
             }
+            sku.setGoodsId(id);
             if(values.size()==1){
-                goodsMapper.addSkuSingle(sku.getPrice(),sku.getInventory(),values.get(0),id);
+                sku.setSpecsValuesId(values.get(0));
             }
             else{
-                goodsMapper.addSkuDouble(sku.getPrice(),sku.getInventory(),values.get(0),values.get(1),id);
+                sku.setSpecsValuesId(values.get(0));
+                sku.setSpecsValuesId2(values.get(1));
             }
+            goodsMapper.addSku(sku);
         }
 
         // 修改goods价格

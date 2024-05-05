@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class Specs {
-    private String id;
+    private Integer id;
 
     @NotEmpty
     @Size(min=1,max=45,message = "规格名长度应为1~45")

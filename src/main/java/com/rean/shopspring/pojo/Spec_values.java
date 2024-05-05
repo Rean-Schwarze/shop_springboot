@@ -15,4 +15,8 @@ public class Spec_values {
     private String picture;
 
     private String desc;
+
+    private Integer specsId;
+
+    private Integer goodsId;
 }

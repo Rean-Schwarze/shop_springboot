@@ -1,5 +1,6 @@
 package com.rean.shopspring.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -13,19 +14,19 @@ import java.util.List;
 @Data
 public class SellerGoodsRequest {
     @NotEmpty
-    @Pattern(regexp = "[^^#*%&',;=?\\s$\\x22]+", message = "名称不能含有非法字符")
+    @Pattern(regexp = "[^^#*%&',;=?$\\x22]+", message = "名称不能含有非法字符")
     @Size(max=45,message = "名称字数不应超过45")
     private String name;
 
     @NotEmpty
-    @Pattern(regexp = "[^^#*%&',;=?\\s$\\x22]+", message = "描述不能含有非法字符")
+    @Pattern(regexp = "[^^#*%&',;=?$\\x22]+", message = "描述不能含有非法字符")
     @Size(max=512,message = "描述字数不应超过512")
     private String desc;
 
-    @NotEmpty
+    @NotNull
     private Integer category;
 
-    @NotEmpty
+    @NotNull
     private Integer subCategory;
 
     private Integer subCategory2;
@@ -44,8 +45,15 @@ public class SellerGoodsRequest {
 
     private String svdName;
 
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp pubTime;
 
     @JsonProperty("isOnSale")
     private boolean isOnSale;
+
+    private Integer brandId;
+
+    private Integer addSeller;
+
+    private Integer id;
 }

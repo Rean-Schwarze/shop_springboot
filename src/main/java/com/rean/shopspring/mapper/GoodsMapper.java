@@ -40,7 +40,7 @@ public interface GoodsMapper {
     List<Specs> getSpcesByGoodsId(Integer id);
 
     @Select("select * from specs_values where specs_id=#{id}")
-    List<Spec_values> getSpcesValueBySpecsId(String id);
+    List<Spec_values> getSpcesValueBySpecsId(Integer id);
 
     // 废弃
     @Select("select * from specs_values where id=(select specs_values_id from specs_values_sku where sku_id=#{id})")
@@ -95,33 +95,32 @@ public interface GoodsMapper {
     // 添加商品（除图片&规格）
     // 返回自增id
     @Insert("insert into goods(name,`desc`,brand_id,category_id,sub_category_id,sub_category_id2," +
-            "isPreSale,is_new,is_on_sale,svd_name,pubTime,add_seller) values(#{name},#{desc},#{brand_id}," +
-            "#{category_id},#{sub_id},#{sub_id2},#{isPreSale},#{isNew},#{isOnSale},#{svd_name},#{pubTime},#{seller_id})")
+            "isPreSale,is_new,is_on_sale,svd_name,pubTime,add_seller) values(#{name},#{desc},#{brandId}," +
+            "#{category},#{subCategory},#{subCategory2},#{isPreSale},#{isNew},#{isOnSale},#{svdName},#{pubTime},#{addSeller})")
     @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
-    int addGoods(String name, String desc, Integer brand_id, Integer category_id, Integer sub_id, Integer sub_id2,
-                  boolean isPreSale, boolean isNew, boolean isOnSale, String svd_name, Timestamp pubTime, Integer seller_id);
+    void addGoods(SellerGoodsRequest sellerGoodsRequest);
 
     // 添加规格
-    @Insert("insert into specs(name,goods_id) values (#{name},#{goods_id})")
+    @Insert("insert into specs(name,goods_id) values (#{name},#{goodsId})")
     @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
-    int addSpecs(String name,Integer goods_id);
+    void addSpecs(Specs specs);
 
     // 添加具体规格
     @Insert("insert into specs_values(name,picture,`desc`,specs_id,goods_id) values (#{name},#{picture},#{desc}," +
-            "#{specs_id},#{goods_id})")
+            "#{specsId},#{goodsId})")
     @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
-    int addSpecsValues(String name,String picture,String desc, Integer spces_id,Integer goods_id);
+    void addSpecsValues(Spec_values spec_values);
 
-    // 添加sku（单规格）
-    @Insert("insert into sku (price,inventory,specs_values_id,goods_id) values (#{price},#{inventory}," +
-            "#{specs_values_id},#{goods_id});")
-//    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
-    void addSkuSingle(String price, Integer inventory, Integer specs_values_id,Integer goods_id);
-
-    // 添加sku（双规格）
+    // 添加sku
     @Insert("insert into sku (price,inventory,specs_values_id,specs_values_id2,goods_id) values (#{price},#{inventory}," +
-            "#{specs_values_id},#{specs_values_id2},#{goods_id});")
-    void addSkuDouble(String price, Integer inventory, Integer specs_values_id,Integer specs_values_id2,Integer goods_id);
+            "#{specsValuesId},#{specsValuesId2},#{goodsId});")
+//    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
+    void addSku(Sku sku);
+
+//    // 添加sku（双规格）
+//    @Insert("insert into sku (price,inventory,specs_values_id,specs_values_id2,goods_id) values (#{price},#{inventory}," +
+//            "#{specs_values_id},#{specs_values_id2},#{goods_id});")
+//    void addSkuDouble(String price, Integer inventory, Integer specs_values_id,Integer specs_values_id2,Integer goods_id);
 
 //    ----------------------------------------
 //    修改相关

@@ -20,9 +20,9 @@ public class Sku {
     private Integer salesCount;
     private Integer oldSalesCount;
     private Integer salesVolume;
-    private int specsValuesId;
-    private int specsValuesId2;
-    private int goodsId;
+    private Integer specsValuesId;
+    private Integer specsValuesId2;
+    private Integer goodsId;
     @NotNull
     private List<Spec_sku> specs;
 }
