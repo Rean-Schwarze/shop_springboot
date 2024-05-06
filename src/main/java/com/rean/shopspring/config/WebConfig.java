@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor).excludePathPatterns("/user/login","/user/register","/upload",
                 "/home/category/head","/home/new","/home/banner","/home/category","/home/goods","/goods","/category/sub/filter",
                 "/category/goods/temporary","/pay/**","/paycallback","/seller/login");
-        registry.addInterceptor(sellerInterceptor).addPathPatterns("/seller/**").excludePathPatterns("/seller/login");
+        registry.addInterceptor(sellerInterceptor).addPathPatterns("/seller/**","/upload/seller/**").excludePathPatterns("/seller/login");
     }
 
     @Override

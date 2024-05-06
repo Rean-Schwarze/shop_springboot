@@ -16,11 +16,11 @@ public interface FileMapper {
     @Select("select id from sub_category where name=#{name}")
     int findSubCategoryIdByName(String name);
 
-    @Insert("insert into main_pictures(address, goods_id) values (#{url},#{id})")
-    void addMainPictures(String url,int id);
+    @Insert("insert into main_pictures(address, goods_id, add_seller) values (#{url},#{goods_id},#{seller_id})")
+    void addGoodsMainPictures(String url,Integer goods_id,Integer seller_id);
 
-    @Insert("insert into detail_pictures(address, goods_id) values (#{url},#{id})")
-    void addDetailPictures(String url,int id);
+    @Insert("insert into detail_pictures(address, goods_id, add_seller) values (#{url},#{goods_id},#{seller_id})")
+    void addGoodsDetailPictures(String url,Integer goods_id,Integer seller_id);
 
     @Update("update category set picture=#{url} where id=#{id}")
     void addCategoryPictures(String url,int id);
