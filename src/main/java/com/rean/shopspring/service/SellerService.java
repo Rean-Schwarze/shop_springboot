@@ -13,5 +13,5 @@ public interface SellerService {
 
     List<Integer> getSellGoodsId(int seller_id, int category_id);
 
-    boolean addGoods(int seller_id, SellerGoodsRequest request);
+    void addGoods(int seller_id, SellerGoodsRequest request);
 }

@@ -114,13 +114,7 @@ public interface GoodsMapper {
     // 添加sku
     @Insert("insert into sku (price,inventory,specs_values_id,specs_values_id2,goods_id) values (#{price},#{inventory}," +
             "#{specsValuesId},#{specsValuesId2},#{goodsId});")
-//    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
     void addSku(Sku sku);
-
-//    // 添加sku（双规格）
-//    @Insert("insert into sku (price,inventory,specs_values_id,specs_values_id2,goods_id) values (#{price},#{inventory}," +
-//            "#{specs_values_id},#{specs_values_id2},#{goods_id});")
-//    void addSkuDouble(String price, Integer inventory, Integer specs_values_id,Integer specs_values_id2,Integer goods_id);
 
 //    ----------------------------------------
 //    修改相关
