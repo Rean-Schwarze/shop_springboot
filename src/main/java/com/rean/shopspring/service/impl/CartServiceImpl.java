@@ -58,7 +58,7 @@ public class CartServiceImpl implements CartService {
         String totalPrice= String.valueOf(price_int*count);
         String totalPayPrice= String.valueOf(Integer.parseInt(totalPrice)+postFee);
 
-        goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goods.getId())));
+        goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(goods.getId()));
         CartItem cartItem=new CartItem(goods.getId(),price,count,skuId,goods.getName(),
                 attrsText,new ArrayList<>(),goods.getMainPictures().get(0),price,price,true,
                 goods.getInventory(),false,false,postFee,price,totalPrice,totalPayPrice,-1);
@@ -67,7 +67,7 @@ public class CartServiceImpl implements CartService {
 
         Integer SkuIdCount=cartMapper.getSkuIdCount(skuId,user_id);
         if(SkuIdCount==0){
-            cartMapper.addCartList(Double.valueOf(cartItem.getPrice()),count,Integer.parseInt(goods.getId()),skuId,user_id);
+            cartMapper.addCartList(Double.valueOf(cartItem.getPrice()),count,goods.getId(),skuId,user_id);
         }
         else{
             cartMapper.updateCountBySkuId(skuId,SkuIdCount+count);
@@ -77,13 +77,13 @@ public class CartServiceImpl implements CartService {
 
     public void CompleteCartItemList(List<CartItem> cartItemList){
         for(CartItem item:cartItemList){
-            Goods goods=goodsMapper.getGoodsById(Integer.parseInt(item.getId()));
+            Goods goods=goodsMapper.getGoodsById(item.getId());
             item.setName(goods.getName());
 
             String attrsText=joinAttrsText(item.getSkuId());
             item.setAttrsText(attrsText);
 
-            goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goods.getId())));
+            goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(goods.getId()));
             item.setPicture(goods.getMainPictures().get(0));
 
             item.setNowPrice(item.getPrice());

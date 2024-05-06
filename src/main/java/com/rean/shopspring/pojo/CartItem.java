@@ -11,11 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartItem {
-    @NotEmpty
-    private String id; // 商品id
+    private Integer id; // 商品id
     private String price;
     private Integer count;
-    private int skuId;
+    private Integer skuId;
     private String name;
     private String attrsText; // 商品属性
     private List<String> specs;
