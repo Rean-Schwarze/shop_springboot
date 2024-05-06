@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setCount(count);
             orderItem.setSkuId(skuId);
             orderItem.setUser_id(user_id);
-            orderItem.setGoods_id(Integer.parseInt(cartItem.getId()));
+            orderItem.setGoods_id(cartItem.getId());
             orderItemList.add(orderItem);
 
 //            计算总价
