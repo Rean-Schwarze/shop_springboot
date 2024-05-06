@@ -64,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
                 item=goods.subList(real_page*Integer.parseInt(pageSize),goods.size());
             }
             for(Goods i:item){
-                i.setPicture(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(i.getId())).get(0));
+                i.setPicture(goodsMapper.getMainPicturesByGoodsId(i.getId()).get(0));
             }
             result.put("items",item);
             return result;

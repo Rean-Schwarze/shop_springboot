@@ -20,11 +20,11 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public Goods getGoodsById(Integer id){
         Goods goods=goodsMapper.getGoodsById(id);
-        goods.setBrand(goodsMapper.getBrandById(goods.getBrand_id()));
-        goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goods.getId())));
+        goods.setBrand(goodsMapper.getBrandById(goods.getBrandId()));
+        goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(goods.getId()));
 
 //        获取specs
-        List<Specs> specs=goodsMapper.getSpcesByGoodsId(Integer.parseInt(goods.getId()));
+        List<Specs> specs=goodsMapper.getSpcesByGoodsId(goods.getId());
         for(Specs spec:specs){
             List<Spec_values> spec_values=goodsMapper.getSpcesValueBySpecsId(spec.getId());
             spec.setValues(spec_values);
@@ -52,12 +52,12 @@ public class GoodsServiceImpl implements GoodsService {
         }
         goods.setSkus(skus);
 
-        goods.setDetails(new Detail(goodsMapper.getDetailPicturesByGoodsId(Integer.parseInt(goods.getId())),
-                goodsMapper.getDetailPropertiesByGoodsId(Integer.parseInt(goods.getId()))));
+        goods.setDetails(new Detail(goodsMapper.getDetailPicturesByGoodsId(goods.getId()),
+                goodsMapper.getDetailPropertiesByGoodsId(goods.getId())));
 
 //        设置所属分类
-        Category sub=categoryMapper.getSubCategoryById(goods.getSub_category_id());
-        Category par=categoryMapper.getCategoryById(goods.getCategory_id());
+        Category sub=categoryMapper.getSubCategoryById(goods.getSubCategoryId());
+        Category par=categoryMapper.getCategoryById(goods.getCategoryId());
         List<Category> categories=new LinkedList<>();
         categories.add(sub);
         categories.add(par);
@@ -80,9 +80,9 @@ public class GoodsServiceImpl implements GoodsService {
             if (Objects.equals(goods.getId(), "1000002")) {
                 continue;
             }
-            goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(Integer.parseInt(goods.getId())));
+            goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(goods.getId()));
             Map<String, String> goodsMap = new HashMap<>();
-            goodsMap.put("id", goods.getId());
+            goodsMap.put("id", String.valueOf(goods.getId()));
             goodsMap.put("name", goods.getName());
             goodsMap.put("desc", goods.getDesc());
             goodsMap.put("price", goods.getPrice());

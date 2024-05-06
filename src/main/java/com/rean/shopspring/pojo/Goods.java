@@ -8,22 +8,23 @@ import java.util.List;
 
 @Data
 public class Goods {
-    @NotEmpty
-    private String id;
+    private Integer id;
     private String name;
     private String price;
     private String oldPrice;
     private String desc;
     private Integer inventory;
-    private int brand_id;
+    private Integer brandId;
     private Integer salesCount;
     private Integer commentCount;
     private Integer collectCount;
-    private int isPreSale;
-    private int category_id;
-    private int sub_category_id;
-    private int sub_category_id2;
-    private boolean is_new;
+    private boolean isPreSale;
+    private Integer categoryId;
+    private Integer subCategoryId;
+    private Integer subCategoryId2;
+    private boolean isNew;
+    private boolean isOnSale;
+    private boolean isValid;
     private String picture;
     private Brand brand;
     private List<String> mainPictures;
