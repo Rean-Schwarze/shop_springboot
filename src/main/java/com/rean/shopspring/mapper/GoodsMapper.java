@@ -93,8 +93,8 @@ public interface GoodsMapper {
     Goods getGoodsBySkuId(Integer skuId);
 
     // 根据skuId获取商品id
-//    @Select("select goods_id from sku where id=#{skuId}")
-//    Integer getGoodsIdBySkuId(Integer skuId);
+    @Select("select goods_id from sku where id=#{skuId}")
+    Integer getGoodsIdBySkuId(Integer skuId);
 
 //    ----------------------------------------
 //    添加相关

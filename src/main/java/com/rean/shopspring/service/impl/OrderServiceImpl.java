@@ -3,10 +3,7 @@ package com.rean.shopspring.service.impl;
 import com.rean.shopspring.mapper.CartMapper;
 import com.rean.shopspring.mapper.GoodsMapper;
 import com.rean.shopspring.mapper.OrderMapper;
-import com.rean.shopspring.pojo.CartItem;
-import com.rean.shopspring.pojo.Goods;
-import com.rean.shopspring.pojo.Order;
-import com.rean.shopspring.pojo.OrderItem;
+import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.OrderService;
 import com.rean.shopspring.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +20,26 @@ public class OrderServiceImpl implements OrderService {
     private GoodsMapper goodsMapper;
     @Autowired
     private CartMapper cartMapper;
+
+    private String joinAttrsText(Integer skuId){
+        List<Spec_values> spec_values=new ArrayList<>();
+        Spec_values tmp=goodsMapper.getSkuSpecBySkuId(skuId);
+        if(tmp!=null){
+            spec_values.add(tmp);
+        }
+        tmp=goodsMapper.getSkuSpecBySkuId_2(skuId);
+        if(tmp!=null){
+            spec_values.add(tmp);
+        }
+        List<String> attrsTexts=new ArrayList<>();
+        for(Spec_values values:spec_values){
+            if(values!=null){
+                String spec_name=goodsMapper.getSpecNameBySpceValueId(values.getId());
+                attrsTexts.add(spec_name+"："+values.getName());
+            }
+        }
+        return String.join("\t",attrsTexts);
+    }
 
 
 //    提交订单
@@ -155,9 +172,9 @@ public class OrderServiceImpl implements OrderService {
                 Map<String,Object> sku=new HashMap<>();
                 sku.put("id",orderItem.getSkuId());
                 Goods goods=goodsMapper.getGoodsBySkuId(orderItem.getSkuId());
-                sku.put("image",goods.getPicture());
+                sku.put("image",goodsMapper.getMainPicturesByGoodsId(goodsMapper.getGoodsIdBySkuId(orderItem.getSkuId())));
                 sku.put("name",goods.getName());
-                sku.put("attrsText",goods.getDesc());
+                sku.put("attrsText",joinAttrsText(orderItem.getSkuId()));
                 int count=orderItem.getCount();
                 sku.put("quantity", count);
                 double price= Double.parseDouble(goodsMapper.getPriceBySkuId(orderItem.getSkuId()));
