@@ -17,17 +17,17 @@ public interface GoodsMapper {
 //    ----------------------------------------
 
     @Select("select * from goods where id=#{id}")
-    @Results({
-            @Result(column = "brand_id",property = "brand_id",jdbcType = JdbcType.BIGINT),
-            @Result(column = "category_id",property = "category_id",jdbcType = JdbcType.BIGINT),
-            @Result(column = "sub_category_id",property = "sub_category_id",jdbcType = JdbcType.BIGINT),
-            @Result(column = "sub_category_id2",property = "sub_category_id2",jdbcType = JdbcType.BIGINT)
-
-    })
+//    @Results({
+//            @Result(column = "brand_id",property = "brand_id",jdbcType = JdbcType.BIGINT),
+//            @Result(column = "category_id",property = "category_id",jdbcType = JdbcType.BIGINT),
+//            @Result(column = "sub_category_id",property = "sub_category_id",jdbcType = JdbcType.BIGINT),
+//            @Result(column = "sub_category_id2",property = "sub_category_id2",jdbcType = JdbcType.BIGINT)
+//
+//    })
     Goods getGoodsById(Integer id);
 
     // 获取商品id（传入：品牌id、分类id）
-    @Select("select id from goods where brand_id=#{brand_id} and category_id=#{category_id}")
+    @Select("select id from goods where brand_id=#{brand_id} and category_id=#{category_id} and isValid=true")
     List<Integer> getGoodsIdByBrandAndCategory(Integer brand_id,Integer category_id);
 
     @Select("select * from brand where id=#{id}")
@@ -49,11 +49,15 @@ public interface GoodsMapper {
     @Select("select price from sku where id=#{id}")
     String getPriceBySkuId(Integer id);
 
+    // 获取goods表内商品价格
+    @Select("select price from goods where id=#{id}")
+    Integer getPriceByGoodsId(Integer id);
+
     @Select("select inventory from sku where id=#{id}")
     int getInventoryBySkuId(Integer id);
 
     @Select("select * from sku where goods_id=#{id}")
-    List<Sku> getSkuByGoodsId(String id);
+    List<Sku> getSkuByGoodsId(Integer id);
 
     @Select("select * from specs_values where id = (select specs_values_id from sku where id=#{id})")
     Spec_values getSkuSpecBySkuId(Integer id);
@@ -70,14 +74,14 @@ public interface GoodsMapper {
     @Select("select * from properties where goods_id=#{id}")
     List<Property> getDetailPropertiesByGoodsId(Integer id);
 
-    @Select("select * from goods where sub_category_id=#{id} order by #{mode}")
+    @Select("select * from goods where sub_category_id=#{id} and isValid=true order by #{mode}")
     List<Goods> getGoodsBySubCategory(Integer id, String mode);
 
-    @Select("select * from goods where sub_category_id2=#{id} order by #{mode}")
+    @Select("select * from goods where sub_category_id2=#{id} and isValid=true order by #{mode}")
     List<Goods> getGoodsBySubCategory2(Integer id, String mode);
 
 //    获取商品（随机、指定limit）
-    @Select("select id,name,`desc`,price from goods order by RAND() LIMIT #{limit}")
+    @Select("select id,name,`desc`,price from goods where isValid=true order by RAND() LIMIT #{limit}")
     List<Goods> getGoodsByRandom(Integer limit);
 
 //    获取商品总数
@@ -87,6 +91,10 @@ public interface GoodsMapper {
 //    根据skuId获取单个商品的封面、描述、名称
     @Select("select picture,name,`desc` from goods where id=(select goods_id from sku where id=#{skuId})")
     Goods getGoodsBySkuId(Integer skuId);
+
+    // 根据skuId获取商品id
+//    @Select("select goods_id from sku where id=#{skuId}")
+//    Integer getGoodsIdBySkuId(Integer skuId);
 
 //    ----------------------------------------
 //    添加相关
@@ -124,8 +132,20 @@ public interface GoodsMapper {
     @Update("update sku set inventory=#{count} where id=#{id}")
     void updateSkuInventory(Integer id,int count);
 
+    // 修改价格
+    @Update("update sku set price=#{price}, old_price=#{oldPrice} where id=#{id}")
+    void updateSkuPrice(Integer id, String price, String oldPrice);
+
     // 修改goods表内商品价格
     @Update("update goods set price=#{price}, oldPrice=#{oldPrice} where id=#{id}")
     void updateGoodsPrice(String price,String oldPrice, Integer id);
+
+//    ----------------------------------------
+//    删除相关
+//    ----------------------------------------
+
+    // 伪删除商品
+    @Update("update goods set isValid=false where id=#{id}")
+    void deleteGoodsFake(Integer id);
 
 }

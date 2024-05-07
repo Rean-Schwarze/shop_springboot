@@ -127,4 +127,27 @@ public class SellerServiceImpl implements SellerService {
         // 修改goods价格
         goodsMapper.updateGoodsPrice(String.valueOf(minPrice),String.valueOf(minPrice),id);
     }
+
+    // 删除商品（伪
+    public void deleteGoodsFake(Integer id, Integer seller_id){
+        goodsMapper.deleteGoodsFake(id);
+    }
+
+    // 修改商品价格、库存
+    public void updateGoodsPriceAndInventory(Integer id, String price, Integer inventory, Integer goods_id, Integer seller_id){
+        // 修改sku表内价格
+        String oldPrice=goodsMapper.getPriceBySkuId(id);
+        goodsMapper.updateSkuPrice(id,price,oldPrice);
+        goodsMapper.updateSkuInventory(id,inventory);
+
+        // 修改goods表内价格
+        List<Sku> skus=goodsMapper.getSkuByGoodsId(goods_id);
+        Integer oldPriceGoods=goodsMapper.getPriceByGoodsId(goods_id);
+        int tmp=Integer.MAX_VALUE;
+        for(Sku sku:skus){
+            tmp=Integer.min(tmp, Integer.parseInt(sku.getPrice()));
+        }
+        goodsMapper.updateGoodsPrice(String.valueOf(tmp),String.valueOf(oldPriceGoods),goods_id);
+    }
+
 }

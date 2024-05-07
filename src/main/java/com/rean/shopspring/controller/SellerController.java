@@ -26,6 +26,11 @@ public class SellerController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    private Integer getSellerId(){
+        Map<String,Object> sellerMap=ThreadLocalUtil.get();
+        return (Integer) sellerMap.get("id");
+    }
+
     @PostMapping("/login")
     @ResponseBody
     public Result<Map<String,Object>> login(@Validated @RequestBody UserLoginRequest userLoginRequest){
@@ -58,15 +63,14 @@ public class SellerController {
     @GetMapping("/category")
     @ResponseBody
     public Result<List<Category>> getSellCategory(){
-        Map<String,Object> sellerMap=ThreadLocalUtil.get();
-        return Result.success(sellerService.getSellCategory((Integer) sellerMap.get("id")));
+        return Result.success(sellerService.getSellCategory(getSellerId()));
     }
 
+    // 获取负责商品
     @GetMapping("/goods")
     @ResponseBody
     public Result<List<Map<String,Object>>> getGoods(@RequestBody Map<String,Object> request){
-        Map<String,Object> sellerMap=ThreadLocalUtil.get();
-        Integer seller_id= (Integer) sellerMap.get("id");
+        Integer seller_id= getSellerId();
         // 获取请求中的分类id
         Integer category_id= (Integer) request.get("id");
         // 获取负责的商品id列表
@@ -104,11 +108,11 @@ public class SellerController {
         return Result.success(goodsList);
     }
 
+    // 添加商品
     @PostMapping("/goods")
     @ResponseBody
     public Result addGoods(@Validated @RequestBody SellerGoodsRequest request){
-        Map<String,Object> sellerMap=ThreadLocalUtil.get();
-        Integer seller_id= (Integer) sellerMap.get("id");
+        Integer seller_id= getSellerId();
         // 检查specs、sku里的specs数目
         int specs_size=request.getSpecs().size();
         if(specs_size>2){ return Result.error("规格数目超出限制"); }
@@ -116,6 +120,26 @@ public class SellerController {
             if(sku.getSpecs().size()!=specs_size){ return Result.error("规格数目不符"); }
         }
         sellerService.addGoods(seller_id,request);
+        return Result.success();
+    }
+
+    // 删除商品（伪）
+    @DeleteMapping("/goods")
+    @ResponseBody
+    public Result deleteGoodsFake(@RequestParam("id") Integer id){
+        Integer seller_id= getSellerId();
+        sellerService.deleteGoodsFake(id,seller_id);
+        return Result.success();
+    }
+
+    // 修改商品价格、库存
+    @PostMapping("/modify/goods/sku")
+    @ResponseBody
+    public Result updateGoodsPriceAndInventory(@RequestBody SellerSkuRequest request){
+        Integer seller_id= getSellerId();
+        for(Sku sku:request.getSkus()){
+            sellerService.updateGoodsPriceAndInventory(sku.getId(),sku.getPrice(),sku.getInventory(),request.getGoods_id(),seller_id);
+        }
         return Result.success();
     }
 }

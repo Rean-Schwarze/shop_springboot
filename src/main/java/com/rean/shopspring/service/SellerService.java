@@ -14,4 +14,8 @@ public interface SellerService {
     List<Integer> getSellGoodsId(int seller_id, int category_id);
 
     void addGoods(int seller_id, SellerGoodsRequest request);
+
+    void deleteGoodsFake(Integer id, Integer seller_id);
+
+    void updateGoodsPriceAndInventory(Integer id, String price, Integer inventory, Integer goods_id, Integer seller_id);
 }
