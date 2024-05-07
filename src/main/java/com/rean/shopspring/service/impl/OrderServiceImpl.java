@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.*;
 
+import static com.rean.shopspring.utils.GoodsUtil.getAttrsText;
+
 @Service
 public class OrderServiceImpl implements OrderService {
     @Autowired
@@ -22,27 +24,10 @@ public class OrderServiceImpl implements OrderService {
     private CartMapper cartMapper;
 
     private String joinAttrsText(Integer skuId){
-        List<Spec_values> spec_values=new ArrayList<>();
-        Spec_values tmp=goodsMapper.getSkuSpecBySkuId(skuId);
-        if(tmp!=null){
-            spec_values.add(tmp);
-        }
-        tmp=goodsMapper.getSkuSpecBySkuId_2(skuId);
-        if(tmp!=null){
-            spec_values.add(tmp);
-        }
-        List<String> attrsTexts=new ArrayList<>();
-        for(Spec_values values:spec_values){
-            if(values!=null){
-                String spec_name=goodsMapper.getSpecNameBySpceValueId(values.getId());
-                attrsTexts.add(spec_name+"："+values.getName());
-            }
-        }
-        return String.join("\t",attrsTexts);
+        return getAttrsText(skuId, goodsMapper);
     }
 
-
-//    提交订单
+    //    提交订单
     @Override
     public Order postOrder(Map<String, Object> orderOption) {
 //        获取用户id
@@ -55,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
 
         int payType=(int) orderOption.get("payType");
         int payChannel=(int) orderOption.get("payChannel");
-        String addressId= String.valueOf((int) orderOption.get("addressId"));
+        Integer addressId= (Integer) orderOption.get("addressId");
         List<Map<String,Object>> goods= (List<Map<String, Object>>) orderOption.get("goods");
 
         List<OrderItem> orderItemList =new ArrayList<>();
@@ -69,9 +54,9 @@ public class OrderServiceImpl implements OrderService {
         calendar.add(Calendar.MINUTE,30);
         Timestamp payLatestTime=new Timestamp(calendar.getTimeInMillis()); // 截止付款时间为订单创建时间+30min
 
-        int poseFee=0;
+        int postFee=0;
         if ((int)orderOption.get("payType")!=0){
-            poseFee=5;
+            postFee=5;
         }
         int totalMoney=0;
         int totalNum=0;
@@ -81,11 +66,8 @@ public class OrderServiceImpl implements OrderService {
 
 //            将订单中每项商品信息单独存储
             CartItem cartItem=cartMapper.getCartListByUserIdAndSkuId(user_id,skuId);
-            OrderItem orderItem=new OrderItem();
-            orderItem.setCount(count);
-            orderItem.setSkuId(skuId);
-            orderItem.setUser_id(user_id);
-            orderItem.setGoods_id(cartItem.getId());
+            OrderItem orderItem=new OrderItem(null,skuId,user_id,null,cartItem.getId(),count,
+                    null,goodsMapper.getBrandIdByGoodsId(cartItem.getId()));
             orderItemList.add(orderItem);
 
 //            计算总价
@@ -96,22 +78,22 @@ public class OrderServiceImpl implements OrderService {
 
             cartMapper.deleteBySkuIdAndUserId(skuId,user_id); // 删除购物车中商品
         }
-        int payMoney=totalMoney+poseFee;
+        int payMoney=totalMoney+postFee;
 
-//        添加订单到数据库
-        orderMapper.addOrder(createTime,payType,orderState,payLatestTime,poseFee,payMoney,totalMoney,totalNum,
-                payChannel,user_id,Integer.parseInt(addressId));
+        // 添加订单到数据库
+        Order order=new Order(null,createTime,orderState,payLatestTime,postFee,payMoney,totalMoney,totalNum,
+                payChannel,payType,null,null,null,null,null,
+                null,user_id,addressId);
 
-//        获取订单
-        Order newOrder=orderMapper.getOrder(user_id,Integer.parseInt(addressId),payMoney);
+        orderMapper.addOrder(order);
 
 //        绑定订单id，添加到数据库
         for(OrderItem orderItem: orderItemList){
-            orderItem.setOrder_id(Integer.parseInt(newOrder.getId()));
-            orderMapper.InsertOrderItem(orderItem.getOrder_id(),orderItem.getSkuId(),orderItem.getUser_id(),orderItem.getCount(),orderItem.getGoods_id());
+            orderItem.setOrderId(order.getId());
+            orderMapper.addOrderItem(orderItem);
         }
 
-        return newOrder;
+        return order;
     }
 
     @Override
@@ -150,11 +132,11 @@ public class OrderServiceImpl implements OrderService {
                 Timestamp payLastTime=order.getPayLatestTime();
                 if(currentTime.before(payLastTime)){
                     order.setCountdown((int) (payLastTime.getTime()-currentTime.getTime()));
-                    orderMapper.updateOrderCountdownById(Integer.parseInt(order.getId()),order.getCountdown());
+                    orderMapper.updateOrderCountdownById(order.getId(),order.getCountdown());
                 }
                 else{
                     order.setCountdown(-1);
-                    orderMapper.updateOrderCountdownById(Integer.parseInt(order.getId()),-1);
+                    orderMapper.updateOrderCountdownById(order.getId(),-1);
                 }
             }
 //            封装返回结果
@@ -167,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
             fullOrder.put("orderState",order.getOrderState());
 
             List<Map<String,Object>> skus=new ArrayList<>();
-            List<OrderItem> orderItemList=orderMapper.getOrderItemByUserIdAndOrderId(user_id, Integer.parseInt(order.getId()));
+            List<OrderItem> orderItemList=orderMapper.getOrderItemByUserIdAndOrderId(user_id, order.getId());
             for(OrderItem orderItem:orderItemList){
                 Map<String,Object> sku=new HashMap<>();
                 sku.put("id",orderItem.getSkuId());

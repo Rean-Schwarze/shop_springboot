@@ -96,6 +96,10 @@ public interface GoodsMapper {
     @Select("select goods_id from sku where id=#{skuId}")
     Integer getGoodsIdBySkuId(Integer skuId);
 
+    // 获取商品所属品牌id
+    @Select("select brand_id from goods where id=#{goods_id}")
+    Integer getBrandIdByGoodsId(Integer goods_id);
+
 //    ----------------------------------------
 //    添加相关
 //    ----------------------------------------

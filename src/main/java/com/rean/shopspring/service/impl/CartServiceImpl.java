@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.rean.shopspring.utils.GoodsUtil.getAttrsText;
+
 @Service
 public class CartServiceImpl implements CartService {
     @Autowired
@@ -27,23 +29,7 @@ public class CartServiceImpl implements CartService {
     // 获取描述规格属性的文字（传入：skuId）
     //（例：颜色分类：浅驼色 尺码：M[85-110斤]）
     private String joinAttrsText(Integer skuId){
-        List<Spec_values> spec_values=new ArrayList<>();
-        Spec_values tmp=goodsMapper.getSkuSpecBySkuId(skuId);
-        if(tmp!=null){
-            spec_values.add(tmp);
-        }
-        tmp=goodsMapper.getSkuSpecBySkuId_2(skuId);
-        if(tmp!=null){
-            spec_values.add(tmp);
-        }
-        List<String> attrsTexts=new ArrayList<>();
-        for(Spec_values values:spec_values){
-            if(values!=null){
-                String spec_name=goodsMapper.getSpecNameBySpceValueId(values.getId());
-                attrsTexts.add(spec_name+"："+values.getName());
-            }
-        }
-        return String.join("\t",attrsTexts);
+        return getAttrsText(skuId, goodsMapper);
     }
 
     @Override
