@@ -12,6 +12,6 @@ public class UserLoginRequest {
     private String account;
 
     @NotEmpty(message = "请输入密码")
-    @Size(min=4,max=16,message = "密码长度应为6~14字符")
+    @Size(min=6,max=14,message = "密码长度应为6~14字符")
     private String password;//密码
 }
