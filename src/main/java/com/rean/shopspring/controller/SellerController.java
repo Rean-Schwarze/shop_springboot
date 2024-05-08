@@ -6,6 +6,7 @@ import com.rean.shopspring.service.SellerService;
 import com.rean.shopspring.utils.JwtUtil;
 import com.rean.shopspring.utils.Md5Util;
 import com.rean.shopspring.utils.ThreadLocalUtil;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -69,15 +70,19 @@ public class SellerController {
     // 获取负责商品
     @GetMapping("/goods")
     @ResponseBody
-    public Result<List<Map<String,Object>>> getGoods(@RequestBody Map<String,Object> request){
+    public Result<List<Map<String,Object>>> getGoods(@RequestBody Map<String,Integer> request){
         Integer seller_id= getSellerId();
         // 获取请求中的分类id
-        Integer category_id= (Integer) request.get("id");
+        Integer category_id= request.get("id");
+        Integer page=request.get("page");
+        Integer pageSize=request.get("pageSize");
         // 获取负责的商品id列表
         List<Integer> goodsIds=sellerService.getSellGoodsId(seller_id,category_id);
         // 获取商品属性
         List<Map<String,Object>> goodsList=new ArrayList<>();
-        for(Integer goods_id:goodsIds){
+        int start=(page-1)*pageSize;
+        for(;start<page*pageSize;start++){
+            Integer goods_id=goodsIds.get(start);
             Goods goods=goodsService.getGoodsById(goods_id);
             // 计算总库存、总销售
             int totalStock=0;
@@ -141,5 +146,23 @@ public class SellerController {
             sellerService.updateGoodsPriceAndInventory(sku.getId(),sku.getPrice(),sku.getInventory(),request.getGoods_id(),seller_id);
         }
         return Result.success();
+    }
+
+    // 获取所负责商品相关订单项目
+    @GetMapping("/order")
+    @ResponseBody
+    public Result getOrder(@Validated @RequestParam("orderState") @Range(min=0,max=6,message = "参数错误") Integer orderState,
+                           @Validated @RequestParam("page") @Range(min=1,message = "参数错误") Integer page,
+                           @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize){
+        Integer seller_id = getSellerId();
+//        先校验参数是否有效
+        Integer total=sellerService.getOrderItemCounts(seller_id,orderState);
+        Integer start=(page-1)*pageSize;
+        if(start<total){
+            return Result.success(sellerService.getOrderLists(seller_id,orderState,start,pageSize));
+        }
+        else{
+            return Result.error("参数超出范围");
+        }
     }
 }

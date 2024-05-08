@@ -2,6 +2,7 @@ package com.rean.shopspring.service.impl;
 
 import com.rean.shopspring.mapper.CategoryMapper;
 import com.rean.shopspring.mapper.GoodsMapper;
+import com.rean.shopspring.mapper.OrderMapper;
 import com.rean.shopspring.mapper.SellerMapper;
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.SellerService;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import static com.rean.shopspring.utils.GoodsUtil.getAttrsText;
+
 
 @Service
 public class SellerServiceImpl implements SellerService {
@@ -18,6 +21,8 @@ public class SellerServiceImpl implements SellerService {
     private CategoryMapper categoryMapper;
     @Autowired
     private GoodsMapper goodsMapper;
+    @Autowired
+    private OrderMapper orderMapper;
     @Override
     public Seller findByName(String name){
         return sellerMapper.findByName(name);
@@ -148,6 +153,45 @@ public class SellerServiceImpl implements SellerService {
             tmp=Integer.min(tmp, Integer.parseInt(sku.getPrice()));
         }
         goodsMapper.updateGoodsPrice(String.valueOf(tmp),String.valueOf(oldPriceGoods),goods_id);
+    }
+
+    public Integer getOrderItemCounts(Integer seller_id, Integer orderState){
+        Integer brand_id=sellerMapper.getSellBrandId(seller_id);
+        if(orderState==0){
+            return orderMapper.getOrderItemCounts(brand_id);
+        }
+        else{
+            return orderMapper.getOrderItemCountsByState(brand_id,orderState);
+        }
+    }
+
+    // 获取负责商品相关订单项目
+    public SellerOrderResponse getOrderLists(Integer seller_id, Integer orderState, Integer start, Integer pageSize){
+        Integer brand_id=sellerMapper.getSellBrandId(seller_id);
+        Integer total=getOrderItemCounts(seller_id,orderState);
+        List<OrderItem> orderItemList;
+        if(orderState==0){
+            orderItemList=orderMapper.getOrderItemByRange(brand_id,start,pageSize);
+        }
+        else{
+            orderItemList=orderMapper.getOrderItemByRangeAndState(brand_id,start,pageSize,orderState);
+        }
+
+
+        SellerOrderResponse response=new SellerOrderResponse();
+        response.setTotal(total);
+        List<SellerOrderResponse.Items> itemsList = new ArrayList<>();
+        for(OrderItem orderItem:orderItemList){
+            Integer goods_id=goodsMapper.getGoodsIdBySkuId(orderItem.getSkuId());
+            SellerOrderResponse.Skus skus=new SellerOrderResponse.Skus(orderItem.getSkuId(),
+                    goodsMapper.getMainPicturesByGoodsId(goods_id).get(0), goodsMapper.getNameByGoodsId(goods_id),
+                    getAttrsText(orderItem.getSkuId(),goodsMapper),orderItem.getCount(),orderItem.getPayMoney());
+            SellerOrderResponse.Items items=new SellerOrderResponse.Items(orderItem.getId(),orderItem.getOrderId(),
+                    orderState,orderItem.getCreateTime(),skus,orderItem.getUserId());
+            itemsList.add(items);
+        }
+        response.setItems(itemsList);
+        return response;
     }
 
 }

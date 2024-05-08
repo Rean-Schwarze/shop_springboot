@@ -3,6 +3,7 @@ package com.rean.shopspring.service;
 import com.rean.shopspring.pojo.Category;
 import com.rean.shopspring.pojo.Seller;
 import com.rean.shopspring.pojo.SellerGoodsRequest;
+import com.rean.shopspring.pojo.SellerOrderResponse;
 
 import java.util.List;
 
@@ -18,4 +19,7 @@ public interface SellerService {
     void deleteGoodsFake(Integer id, Integer seller_id);
 
     void updateGoodsPriceAndInventory(Integer id, String price, Integer inventory, Integer goods_id, Integer seller_id);
+
+    Integer getOrderItemCounts(Integer seller_id, Integer orderState);
+    SellerOrderResponse getOrderLists(Integer seller_id, Integer orderState, Integer start, Integer pageSize);
 }

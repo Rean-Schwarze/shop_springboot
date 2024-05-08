@@ -64,17 +64,18 @@ public class OrderServiceImpl implements OrderService {
             int count= (int)good.get("count");
             Integer skuId= (Integer) good.get("skuId");
 
-//            将订单中每项商品信息单独存储
-            CartItem cartItem=cartMapper.getCartListByUserIdAndSkuId(user_id,skuId);
-            OrderItem orderItem=new OrderItem(null,skuId,user_id,null,cartItem.getId(),count,
-                    null,goodsMapper.getBrandIdByGoodsId(cartItem.getId()));
-            orderItemList.add(orderItem);
-
-//            计算总价
+            // 计算总价
             totalNum+=count;
             String price=goodsMapper.getPriceBySkuId(skuId);
-            totalMoney+=Integer.parseInt(price)*count;
+            int payMoneySingle=Integer.parseInt(price)*count;
+            totalMoney+=payMoneySingle;
             goodsMapper.updateSkuInventory(skuId, goodsMapper.getInventoryBySkuId(skuId)-count); // 修改库存
+
+//            将订单中每项商品信息单独存储
+            CartItem cartItem=cartMapper.getCartListByUserIdAndSkuId(user_id,skuId);
+            OrderItem orderItem=new OrderItem(null,skuId,user_id,null,cartItem.getId(),count,payMoneySingle,
+                    null,goodsMapper.getBrandIdByGoodsId(cartItem.getId()),1,createTime);
+            orderItemList.add(orderItem);
 
             cartMapper.deleteBySkuIdAndUserId(skuId,user_id); // 删除购物车中商品
         }
@@ -153,9 +154,9 @@ public class OrderServiceImpl implements OrderService {
             for(OrderItem orderItem:orderItemList){
                 Map<String,Object> sku=new HashMap<>();
                 sku.put("id",orderItem.getSkuId());
-                Goods goods=goodsMapper.getGoodsBySkuId(orderItem.getSkuId());
-                sku.put("image",goodsMapper.getMainPicturesByGoodsId(goodsMapper.getGoodsIdBySkuId(orderItem.getSkuId())));
-                sku.put("name",goods.getName());
+                Integer goods_id=goodsMapper.getGoodsIdBySkuId(orderItem.getSkuId());
+                sku.put("image",goodsMapper.getMainPicturesByGoodsId(goods_id));
+                sku.put("name",goodsMapper.getNameByGoodsId(goods_id));
                 sku.put("attrsText",joinAttrsText(orderItem.getSkuId()));
                 int count=orderItem.getCount();
                 sku.put("quantity", count);

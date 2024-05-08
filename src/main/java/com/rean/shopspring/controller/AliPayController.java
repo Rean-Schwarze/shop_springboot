@@ -94,6 +94,7 @@ public class AliPayController {
 
                 // 更新订单状态
                 orderMapper.updateOrderStateById(Integer.parseInt(tradeNo),2);
+                orderMapper.updateOrderItemStateByOrderId(Integer.parseInt(tradeNo),2);
             }
         }
         return "success";
