@@ -23,8 +23,8 @@ public class HomeServiceImpl implements HomeService {
         List<Map<String,Object>> result=new ArrayList<>();
         List<Category> categoryList=homeMapper.getAllCategories();
         for (Category category:categoryList){
-            List<Category> subCategoryList=homeMapper.getSubCategoriesByParentId(Integer.parseInt(category.getId()));
-            List<Goods> goodsList=homeMapper.get8GoodsByCategory(Integer.parseInt(category.getId()));
+            List<Category> subCategoryList=homeMapper.getSubCategoriesByParentId(category.getId());
+            List<Goods> goodsList=homeMapper.get8GoodsByCategory(category.getId());
             for (Goods good:goodsList){
                 String picture=homeMapper.getGoodsPicturesById(good.getId());
                 good.setPicture(picture);
@@ -67,8 +67,8 @@ public class HomeServiceImpl implements HomeService {
             tmp.put("id",sub.getId());
             tmp.put("name",sub.getName());
             tmp.put("picture",sub.getPicture());
-            List<Goods> goodsList_1=homeMapper.getGoodsBySubCategoryId(Integer.parseInt(sub.getId()));
-            List<Goods> goodsList_2=homeMapper.getGoodsBySubCategoryId2(Integer.parseInt(sub.getId()));
+            List<Goods> goodsList_1=homeMapper.getGoodsBySubCategoryId(sub.getId());
+            List<Goods> goodsList_2=homeMapper.getGoodsBySubCategoryId2(sub.getId());
             if(goodsList_1==null){
                 for (Goods good:goodsList_2){
                     String picture=homeMapper.getGoodsPicturesById(good.getId());

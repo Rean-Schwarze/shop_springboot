@@ -7,8 +7,7 @@ import java.util.List;
 
 @Data
 public class Category {
-    @NotEmpty
-    private String id;//主键ID
+    private Integer id;//主键ID
     @NotEmpty
     private String name;
     private String picture;
