@@ -5,6 +5,7 @@ import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.JwtUtil;
 import com.rean.shopspring.utils.Md5Util;
 import com.rean.shopspring.utils.ThreadLocalUtil;
+import com.rean.shopspring.utils.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -70,19 +71,7 @@ public class UserController {
         else loginUser = Objects.requireNonNullElse(loginUserPhone, loginUserEmail);
         // 用户存在，检查密码是否正确（要加密一下去比对）
         if(Md5Util.getMD5String(password).equals(loginUser.getPassword())){
-            Map<String,Object> userMap=new HashMap<>();
-            userMap.put("type","user");
-            userMap.put("id",loginUser.getId().toString());
-            userMap.put("account",loginUser.getUsername());
-            userMap.put("nickname",loginUser.getNickname());
-            userMap.put("email",loginUser.getEmail());
-            userMap.put("avatar",loginUser.getAvatar());
-            String token = JwtUtil.genToken(userMap);
-            userMap.put("token",token);
-            //把token存储到redis中
-            ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-            operations.set(token,"userId: "+loginUser.getId().toString(),12, TimeUnit.HOURS);
-            return Result.success(userMap);
+            return Result.success(UserUtil.login(loginUser,"user",stringRedisTemplate));
         }
         return Result.error("密码错误");
     }

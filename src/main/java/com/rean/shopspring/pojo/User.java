@@ -34,4 +34,6 @@ public class User {
     private String phone;
 
     private String avatar;//用户头像地址
+
+    private String name;
 }

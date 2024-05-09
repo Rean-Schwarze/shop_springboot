@@ -9,6 +9,7 @@ import com.rean.shopspring.service.UserService;
 import com.rean.shopspring.utils.AliOssUtil;
 import com.rean.shopspring.utils.Md5Util;
 import com.rean.shopspring.utils.ThreadLocalUtil;
+import com.rean.shopspring.utils.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -89,8 +90,7 @@ public class UserServiceImpl implements UserService {
 //    用户登录后，从ThreadLocalUtil中获取用户id
     @Override
     public int getUserIdIfLogin(){
-        Map<String, Object> u= ThreadLocalUtil.get();
-        return Integer.parseInt((String) u.get("id"));
+        return UserUtil.getUserId();
     }
 
     @Override

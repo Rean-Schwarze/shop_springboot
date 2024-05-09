@@ -6,6 +6,7 @@ import com.rean.shopspring.service.SellerService;
 import com.rean.shopspring.utils.JwtUtil;
 import com.rean.shopspring.utils.Md5Util;
 import com.rean.shopspring.utils.ThreadLocalUtil;
+import com.rean.shopspring.utils.UserUtil;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -28,8 +29,7 @@ public class SellerController {
     private StringRedisTemplate stringRedisTemplate;
 
     private Integer getSellerId(){
-        Map<String,Object> sellerMap=ThreadLocalUtil.get();
-        return (Integer) sellerMap.get("id");
+        return UserUtil.getUserId();
     }
 
     @PostMapping("/login")
@@ -41,19 +41,7 @@ public class SellerController {
         }
         else{
             if(Md5Util.checkPassword(userLoginRequest.getPassword(),loginSeller.getPassword())){
-                Map<String,Object> sellerMap=new HashMap<>();
-                sellerMap.put("type","seller");
-                sellerMap.put("id",loginSeller.getId());
-                sellerMap.put("name",loginSeller.getName());
-                sellerMap.put("avatar",loginSeller.getAvatar());
-
-                String token = JwtUtil.genToken(sellerMap);
-                sellerMap.put("token",token);
-                //把token存储到redis中
-                ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-                operations.set(token,"sellerId: "+loginSeller.getId().toString(),12, TimeUnit.HOURS);
-
-                return Result.success(sellerMap);
+                return Result.success(UserUtil.login(loginSeller,"seller",stringRedisTemplate));
             }
             else{
                 return Result.error("密码错误！");
@@ -70,47 +58,50 @@ public class SellerController {
     // 获取负责商品
     @GetMapping("/goods")
     @ResponseBody
-    public Result<List<Map<String,Object>>> getGoods(@RequestBody Map<String,Integer> request){
+    public Result<List<Map<String,Object>>> getGoods(@Validated @RequestParam("id") @Range(min=1,message = "参数错误") Integer category_id,
+            @Validated @RequestParam("page") @Range(min=1,message = "参数错误") Integer page,
+            @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize){
         Integer seller_id= getSellerId();
-        // 获取请求中的分类id
-        Integer category_id= request.get("id");
-        Integer page=request.get("page");
-        Integer pageSize=request.get("pageSize");
         // 获取负责的商品id列表
         List<Integer> goodsIds=sellerService.getSellGoodsId(seller_id,category_id);
         // 获取商品属性
         List<Map<String,Object>> goodsList=new ArrayList<>();
         int start=(page-1)*pageSize;
-        for(;start<page*pageSize;start++){
-            Integer goods_id=goodsIds.get(start);
-            Goods goods=goodsService.getGoodsById(goods_id);
-            // 计算总库存、总销售
-            int totalStock=0;
-            int totalSales=0;
-            int totalVolume=0;
-            List<Sku> skus = goods.getSkus();
-            for(Sku sku:skus){
-                int stock=sku.getInventory();
-                totalStock+=stock;
-                int sales=sku.getSalesCount();
-                totalSales+=(sales+sku.getOldSalesCount());
-                int volume=sku.getSalesVolume();
-                totalVolume+=(volume+sales*Integer.parseInt(sku.getPrice()));
+        if(start<goodsIds.size()){
+            for(;start<Integer.min(page*pageSize,goodsIds.size());start++){
+                Integer goods_id=goodsIds.get(start);
+                Goods goods=goodsService.getGoodsById(goods_id);
+                // 计算总库存、总销售
+                int totalStock=0;
+                int totalSales=0;
+                int totalVolume=0;
+                List<Sku> skus = goods.getSkus();
+                for(Sku sku:skus){
+                    int stock=sku.getInventory();
+                    totalStock+=stock;
+                    int sales=sku.getSalesCount();
+                    totalSales+=(sales+sku.getOldSalesCount());
+                    int volume=sku.getSalesVolume();
+                    totalVolume+=(volume+sales*Integer.parseInt(sku.getPrice()));
+                }
+                // 拼接结果
+                Map<String,Object> result=new HashMap<>();
+                result.put("id",goods.getId());
+                result.put("name",goods.getName());
+                result.put("price",goods.getPrice());
+                result.put("picture",goods.getPicture());
+                result.put("totalStock",totalStock);
+                result.put("totalSales",totalSales);
+                result.put("totalVolume",totalVolume);
+                result.put("specs",goods.getSpecs());
+                result.put("skus",goods.getSkus());
+                goodsList.add(result);
             }
-            // 拼接结果
-            Map<String,Object> result=new HashMap<>();
-            result.put("id",goods.getId());
-            result.put("name",goods.getName());
-            result.put("price",goods.getPrice());
-            result.put("picture",goods.getPicture());
-            result.put("totalStock",totalStock);
-            result.put("totalSales",totalSales);
-            result.put("totalVolume",totalVolume);
-            result.put("specs",goods.getSpecs());
-            result.put("skus",goods.getSkus());
-            goodsList.add(result);
+            return Result.success(goodsList);
         }
-        return Result.success(goodsList);
+        else{
+            return Result.error("参数超出范围！");
+        }
     }
 
     // 添加商品

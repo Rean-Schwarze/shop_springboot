@@ -1,5 +1,6 @@
 package com.rean.shopspring.config;
 
+import com.rean.shopspring.interceptors.AdminInterceptor;
 import com.rean.shopspring.interceptors.LoginInterceptor;
 import com.rean.shopspring.interceptors.SellerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private SellerInterceptor sellerInterceptor;
 
+    @Autowired
+    private AdminInterceptor adminInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //登录接口和注册接口不拦截
         registry.addInterceptor(loginInterceptor).excludePathPatterns("/user/login","/user/register","/upload",
                 "/home/category/head","/home/new","/home/banner","/home/category","/home/goods","/goods","/category/sub/filter",
-                "/category/goods/temporary","/pay/**","/paycallback","/seller/login");
+                "/category/goods/temporary","/pay/**","/paycallback","/seller/login","/admin/login");
         registry.addInterceptor(sellerInterceptor).addPathPatterns("/seller/**","/upload/seller/**").excludePathPatterns("/seller/login");
+        registry.addInterceptor(adminInterceptor).addPathPatterns("/admin/**").excludePathPatterns("/admin/login");
     }
 
     @Override
