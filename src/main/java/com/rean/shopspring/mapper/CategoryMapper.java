@@ -1,6 +1,7 @@
 package com.rean.shopspring.mapper;
 
 import com.rean.shopspring.pojo.Category;
+import com.rean.shopspring.pojo.SellerCategory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -20,6 +21,10 @@ public interface CategoryMapper {
 
     @Select("select * from category where id=#{id}")
     Category getCategoryById(Integer id);
+
+    // 获取销售人员负责分类
+    @Select("select * from category where id=#{id}")
+    SellerCategory getSellerCategoryById(Integer id);
 
     //    获取子分类（传入：子分类id）
     @Select("select * from sub_category where id=#{id}")

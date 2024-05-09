@@ -10,12 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Seller extends User{
-    private Integer brandId;//品牌id
-
-    @JsonProperty("isMaster")
-    private boolean isMaster;
-
-    @JsonProperty("isValid")
-    private boolean isValid;
+public class SellerCategory extends Category{
+    @JsonProperty("isAllSub")
+    private boolean isAllSub;
 }

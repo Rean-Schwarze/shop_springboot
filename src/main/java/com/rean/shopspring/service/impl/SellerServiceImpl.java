@@ -30,10 +30,11 @@ public class SellerServiceImpl implements SellerService {
 
     // 获取负责的分类
     @Override
-    public List<Category> getSellCategory(int seller_id){
-        List<Category> categoryList=new ArrayList<>();
+    public List<SellerCategory> getSellCategory(int seller_id){
+        List<SellerCategory> categoryList=new ArrayList<>();
         Set<Integer> categoryIdSet=new HashSet<>();
         Map<Integer,List<Integer>> categoryIdMap=new HashMap<>();
+        Map<Integer,Boolean> categoryIdAndIsAllSubMap=new HashMap<>();
 
         List<Seller_categories> seller_categories=sellerMapper.getSellCategory(seller_id);
 
@@ -41,6 +42,8 @@ public class SellerServiceImpl implements SellerService {
         for(Seller_categories seller_category : seller_categories){
             int category_id=seller_category.getCategoryId();
             categoryIdSet.add(category_id);
+
+            categoryIdAndIsAllSubMap.put(category_id,seller_category.isAllSub());
 
             if(seller_category.isAllSub()){
                 categoryIdMap.put(category_id,categoryMapper.getSubCategoryIdByParentId(category_id));
@@ -59,7 +62,8 @@ public class SellerServiceImpl implements SellerService {
 
 //        遍历父分类，添加子分类
         for(Integer category_id:categoryIdSet){
-            Category category=categoryMapper.getCategoryById(category_id);
+            SellerCategory category=categoryMapper.getSellerCategoryById(category_id);
+            category.setAllSub(categoryIdAndIsAllSubMap.get(category_id));
             List<Category> children=new ArrayList<>();
             for(Integer sub_id:categoryIdMap.get(category_id)){
                 children.add(categoryMapper.getSubCategoryById(sub_id));

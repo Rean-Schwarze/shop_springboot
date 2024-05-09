@@ -10,7 +10,7 @@ import java.util.List;
 public interface SellerService {
     Seller findByName(String name);
 
-    List<Category> getSellCategory(int seller_id);
+    <T extends Category> List<T> getSellCategory(int seller_id);
 
     List<Integer> getSellGoodsId(int seller_id, int category_id);
 
