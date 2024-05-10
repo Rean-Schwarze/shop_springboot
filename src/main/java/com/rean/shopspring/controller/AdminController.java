@@ -59,10 +59,10 @@ public class AdminController {
     public Result<List<AdminSellerResponse>> getSellerLists(@Validated @RequestParam("page") @Range(min=1,message = "参数错误") Integer page,
                                  @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize,
                                  @Validated @RequestParam("brand_id") @Range(min=0,message = "参数错误") Integer brand_id){
-        Integer count=adminService.getSellerCount(brand_id);
+        Integer count=adminService.getSellerCount(brand_id,true);
         int start=(page-1)*pageSize;
         if(start<count){
-            List<AdminSellerResponse> responses=adminService.getSellerLists(brand_id,start,pageSize);
+            List<AdminSellerResponse> responses=adminService.getSellerLists(brand_id,start,pageSize,true);
             for(AdminSellerResponse r:responses){
                 List<SellerCategory> sellerCategories=sellerService.getSellCategory(r.getId());
                 r.setCategory(sellerCategories);
@@ -83,6 +83,32 @@ public class AdminController {
         }
         else{
             return Result.error("用户已存在！");
+        }
+    }
+
+    @PostMapping("/seller/reset/password")
+    @ResponseBody
+    public Result sellerPasswordReset(@Validated @RequestBody PasswordResetRequest request){
+        Seller seller=sellerService.findById(request.getId());
+        if(seller!=null){
+            sellerService.updatePassword(request.getId(), request.getNewPassword());
+            return Result.success();
+        }
+        else{
+            return Result.error("用户不存在！");
+        }
+    }
+
+    @DeleteMapping("/seller")
+    @ResponseBody
+    public Result deleteSeller(@Validated @RequestParam("id") @Range(min=1,message = "参数错误") Integer id){
+        Seller seller=sellerService.findById(id);
+        if(seller!=null){
+            adminService.deleteSellerFake(id);
+            return Result.success();
+        }
+        else {
+            return Result.error("用户不存在！");
         }
     }
 }

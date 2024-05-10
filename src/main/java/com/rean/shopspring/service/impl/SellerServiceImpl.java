@@ -6,6 +6,7 @@ import com.rean.shopspring.mapper.OrderMapper;
 import com.rean.shopspring.mapper.SellerMapper;
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.SellerService;
+import com.rean.shopspring.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class SellerServiceImpl implements SellerService {
     public Seller findByName(String name){
         return sellerMapper.findByName(name);
     }
+
+    @Override
+    public Seller findById(Integer id) { return sellerMapper.findById(id); }
 
     // 获取负责的分类
     @Override
@@ -198,4 +202,9 @@ public class SellerServiceImpl implements SellerService {
         return response;
     }
 
+    // 修改密码
+    public void updatePassword(Integer id,String newPassword){
+        String md5Password= Md5Util.getMD5String(newPassword);
+        sellerMapper.updatePassword(id,md5Password);
+    }
 }

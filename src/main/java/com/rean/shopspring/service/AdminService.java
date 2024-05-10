@@ -9,9 +9,11 @@ import java.util.List;
 public interface AdminService {
     Admin findByName(String name);
 
-    Integer getSellerCount(Integer brand_id);
+    Integer getSellerCount(Integer brand_id, Boolean isValid);
 
-    List<AdminSellerResponse> getSellerLists(Integer brand_id, Integer start, Integer pageSize);
+    List<AdminSellerResponse> getSellerLists(Integer brand_id, Integer start, Integer pageSize, Boolean isValid);
 
     Integer sellerRegister(SellerRegisterRequest request);
+
+    void deleteSellerFake(Integer id);
 }

@@ -10,6 +10,8 @@ import java.util.List;
 public interface SellerService {
     Seller findByName(String name);
 
+    Seller findById(Integer id);
+
     <T extends Category> List<T> getSellCategory(int seller_id);
 
     List<Integer> getSellGoodsId(int seller_id, int category_id);
@@ -21,5 +23,8 @@ public interface SellerService {
     void updateGoodsPriceAndInventory(Integer id, String price, Integer inventory, Integer goods_id, Integer seller_id);
 
     Integer getOrderItemCounts(Integer seller_id, Integer orderState);
+
     SellerOrderResponse getOrderLists(Integer seller_id, Integer orderState, Integer start, Integer pageSize);
+
+    void updatePassword(Integer id, String newPassword);
 }

@@ -4,10 +4,7 @@ import com.rean.shopspring.pojo.Category;
 import com.rean.shopspring.pojo.Seller;
 import com.rean.shopspring.pojo.SellerRegisterRequest;
 import com.rean.shopspring.pojo.Seller_categories;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -20,6 +17,9 @@ public interface SellerMapper {
 
     @Select("select * from seller where name=#{name}")
     Seller findByName(String name);
+
+    @Select("select * from seller where id=#{id}")
+    Seller findById(Integer id);
 
     @Select("select * from seller_categories where seller_id=#{seller_id}")
     List<Seller_categories> getSellCategory(Integer seller_id);
@@ -39,4 +39,12 @@ public interface SellerMapper {
     // 绑定负责分类
     @Insert("insert into seller_categories(seller_id,category_id,sub_category_id,is_all_sub) values (#{sellerId},#{categoryId},#{subCategoryId},#{isAllSub})")
     void bindCategory(Seller_categories categories);
+
+//    ------------------------------
+//    修改相关
+//    ------------------------------
+
+    // 修改密码
+    @Update("update seller set password=#{newPassword} where id=#{id}")
+    void updatePassword(Integer id,String newPassword);
 }

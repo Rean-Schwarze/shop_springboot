@@ -23,24 +23,24 @@ public class AdminServiceImpl implements AdminService {
     public Admin findByName(String name) {return adminMapper.findByName(name);}
 
     @Override
-    public Integer getSellerCount(Integer brand_id){
+    public Integer getSellerCount(Integer brand_id, Boolean isValid){
         if(brand_id==0){
-            return adminMapper.getSellerCountAll();
+            return adminMapper.getSellerCountAll(isValid);
         }
         else{
-            return adminMapper.getSellerCountByBrandId(brand_id);
+            return adminMapper.getSellerCountByBrandId(brand_id,isValid);
         }
     }
 
     // 获取销售人员列表（除分类）
     @Override
-    public List<AdminSellerResponse> getSellerLists(Integer brand_id, Integer start, Integer pageSize){
+    public List<AdminSellerResponse> getSellerLists(Integer brand_id, Integer start, Integer pageSize, Boolean isValid){
         List<Seller> sellerList;
         if(brand_id==0){
-            sellerList=adminMapper.getSellerAll(start,pageSize);
+            sellerList=adminMapper.getSellerAll(start,pageSize,isValid);
         }
         else{
-            sellerList=adminMapper.getSellerByBrandId(brand_id,start,pageSize);
+            sellerList=adminMapper.getSellerByBrandId(brand_id,start,pageSize,isValid);
         }
         List<AdminSellerResponse> responses=new ArrayList<>();
         for(Seller seller:sellerList){
@@ -67,20 +67,28 @@ public class AdminServiceImpl implements AdminService {
         Integer seller_id=request.getId();
 
         // 绑定负责分类
-        for(SellerCategory category:request.getCategory()){
-            Seller_categories seller_categories=new Seller_categories(seller_id, category.getId(),
-                    null, category.isAllSub());
-            if(!category.isAllSub()){
-                for(Category sub:category.getChildren()){
-                    seller_categories.setSubCategoryId(sub.getId());
+        if(request.getCategory()!=null){
+            for(SellerCategory category:request.getCategory()){
+                Seller_categories seller_categories=new Seller_categories(seller_id, category.getId(),
+                        null, category.isAllSub());
+                if(!category.isAllSub()){
+                    for(Category sub:category.getChildren()){
+                        seller_categories.setSubCategoryId(sub.getId());
+                        sellerMapper.bindCategory(seller_categories);
+                    }
+                }
+                else{
                     sellerMapper.bindCategory(seller_categories);
                 }
-            }
-            else{
-                sellerMapper.bindCategory(seller_categories);
             }
         }
 
         return seller_id;
+    }
+
+    // 删除销售人员（伪）
+    @Override
+    public void deleteSellerFake(Integer id){
+        adminMapper.deleteSellerFake(id);
     }
 }
