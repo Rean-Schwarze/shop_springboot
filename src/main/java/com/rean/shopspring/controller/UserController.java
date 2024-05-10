@@ -1,17 +1,17 @@
 package com.rean.shopspring.controller;
 
 import com.rean.shopspring.pojo.*;
+import com.rean.shopspring.service.LogService;
 import com.rean.shopspring.service.UserService;
-import com.rean.shopspring.utils.JwtUtil;
-import com.rean.shopspring.utils.Md5Util;
-import com.rean.shopspring.utils.ThreadLocalUtil;
-import com.rean.shopspring.utils.UserUtil;
+import com.rean.shopspring.utils.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,16 @@ public class UserController {
     private UserService userService;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
-//    用户注册
+    @Autowired
+    private LogService logService;
+    @Autowired
+    private HttpServletRequest servletRequest;
+
+    public UserController(HttpServletRequest servletRequest) {
+        this.servletRequest = servletRequest;
+    }
+
+    //    用户注册
     @PostMapping("/register")
     public Result register(@Validated @RequestBody UserRegisterRequest user){
         String username=user.getAccount();
@@ -71,9 +80,23 @@ public class UserController {
         else loginUser = Objects.requireNonNullElse(loginUserPhone, loginUserEmail);
         // 用户存在，检查密码是否正确（要加密一下去比对）
         if(Md5Util.getMD5String(password).equals(loginUser.getPassword())){
+            // 添加日志
+            String ip = IpUtil.getIpAddr(servletRequest);
+            logService.logLogin("user",loginUser.getId(),ip,"login");
             return Result.success(UserUtil.login(loginUser,"user",stringRedisTemplate));
         }
         return Result.error("密码错误");
+    }
+
+    // 退出登录
+    @PostMapping("/logout")
+    @ResponseBody
+    public Result logout(){
+        // 添加日志
+        String ip = IpUtil.getIpAddr(servletRequest);
+        logService.logLogin("user",UserUtil.getUserId(),ip,"logout");
+        UserUtil.logout(servletRequest.getHeader("Authorization"),stringRedisTemplate);
+        return Result.success();
     }
 
 //    获取用户收货地址

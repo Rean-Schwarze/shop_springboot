@@ -2,11 +2,10 @@ package com.rean.shopspring.controller;
 
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.AdminService;
+import com.rean.shopspring.service.LogService;
 import com.rean.shopspring.service.SellerService;
-import com.rean.shopspring.utils.JwtUtil;
-import com.rean.shopspring.utils.Md5Util;
-import com.rean.shopspring.utils.ThreadLocalUtil;
-import com.rean.shopspring.utils.UserUtil;
+import com.rean.shopspring.utils.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -33,6 +32,11 @@ public class AdminController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private LogService logService;
+    @Autowired
+    private HttpServletRequest servletRequest;
+
     private Integer getAdminId(){
         return UserUtil.getUserId();
     }
@@ -46,12 +50,25 @@ public class AdminController {
         }
         else{
             if(Md5Util.checkPassword(request.getPassword(),loginAdmin.getPassword())){
+                // 添加日志
+                String ip = IpUtil.getIpAddr(servletRequest);
+                logService.logLogin("admin",loginAdmin.getId(),ip,"login");
                 return Result.success(UserUtil.login(loginAdmin,"admin",stringRedisTemplate));
             }
             else{
                 return Result.error("密码错误！");
             }
         }
+    }
+
+    @PostMapping("/logout")
+    @ResponseBody
+    public Result logout(){
+        // 添加日志
+        String ip = IpUtil.getIpAddr(servletRequest);
+        logService.logLogin("admin",UserUtil.getUserId(),ip,"logout");
+        UserUtil.logout(servletRequest.getHeader("Authorization"),stringRedisTemplate);
+        return Result.success();
     }
 
     @GetMapping("/seller")

@@ -37,4 +37,8 @@ public class UserUtil {
         Map<String,Object> map= ThreadLocalUtil.get();
         return (Integer) map.get("id");
     }
+
+    public static void logout(String token, StringRedisTemplate stringRedisTemplate){
+        stringRedisTemplate.delete(token);
+    }
 }
