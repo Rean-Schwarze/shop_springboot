@@ -73,4 +73,16 @@ public class AdminController {
             return Result.error("参数超出范围");
         }
     }
+
+    @PostMapping("/seller/register")
+    @ResponseBody
+    public Result<Integer> sellerRegister(@Validated @RequestBody SellerRegisterRequest request){
+        Seller tmp=sellerService.findByName(request.getName());
+        if(tmp==null){
+            return Result.success(adminService.sellerRegister(request));
+        }
+        else{
+            return Result.error("用户已存在！");
+        }
+    }
 }

@@ -1,11 +1,10 @@
 package com.rean.shopspring.service.impl;
 
 import com.rean.shopspring.mapper.AdminMapper;
-import com.rean.shopspring.pojo.Admin;
-import com.rean.shopspring.pojo.AdminSellerResponse;
-import com.rean.shopspring.pojo.Brand;
-import com.rean.shopspring.pojo.Seller;
+import com.rean.shopspring.mapper.SellerMapper;
+import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.AdminService;
+import com.rean.shopspring.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,9 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
     @Autowired
     private AdminMapper adminMapper;
+
+    @Autowired
+    private SellerMapper sellerMapper;
 
     @Override
     public Admin findByName(String name) {return adminMapper.findByName(name);}
@@ -54,5 +56,31 @@ public class AdminServiceImpl implements AdminService {
             responses.add(response);
         }
         return responses;
+    }
+
+    @Override
+    public Integer sellerRegister(SellerRegisterRequest request){
+        // 加密密码
+        String md5String= Md5Util.getMD5String(request.getPassword());
+        request.setMd5Password(md5String);
+        sellerMapper.sellerRegister(request);
+        Integer seller_id=request.getId();
+
+        // 绑定负责分类
+        for(SellerCategory category:request.getCategory()){
+            Seller_categories seller_categories=new Seller_categories(seller_id, category.getId(),
+                    null, category.isAllSub());
+            if(!category.isAllSub()){
+                for(Category sub:category.getChildren()){
+                    seller_categories.setSubCategoryId(sub.getId());
+                    sellerMapper.bindCategory(seller_categories);
+                }
+            }
+            else{
+                sellerMapper.bindCategory(seller_categories);
+            }
+        }
+
+        return seller_id;
     }
 }
