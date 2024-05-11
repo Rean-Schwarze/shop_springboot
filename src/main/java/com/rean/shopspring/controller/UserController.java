@@ -7,16 +7,12 @@ import com.rean.shopspring.utils.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -128,6 +124,15 @@ public class UserController {
     @ResponseBody
     public Result modifyAddress(@Validated @RequestBody Address address){
         userService.modifyAddress(address);
+        return Result.success();
+    }
+
+    @PostMapping("/log/tp")
+    @ResponseBody
+    public Result addTpLog(@Validated @RequestBody LogTpRequest logTp){
+        // 添加日志
+        String ip = IpUtil.getIpAddr(servletRequest);
+        logService.logTp(logTp.getUserId(),ip,logTp.getType()+" "+logTp.getGoodsId().toString()+" "+logTp.getTime().toString());
         return Result.success();
     }
 }
