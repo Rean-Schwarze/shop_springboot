@@ -4,6 +4,7 @@ import com.rean.shopspring.mapper.CategoryMapper;
 import com.rean.shopspring.mapper.GoodsMapper;
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.GoodsService;
+import com.rean.shopspring.utils.GoodsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,7 @@ public class GoodsServiceImpl implements GoodsService {
                 sk.add(ss);
             }
             sku.setSpecs(sk);
+            sku.setAttrsText(GoodsUtil.getAttrsText(sku.getId(),goodsMapper));
         }
         goods.setSkus(skus);
 
