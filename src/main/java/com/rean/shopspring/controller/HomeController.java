@@ -1,16 +1,18 @@
 package com.rean.shopspring.controller;
 
 import com.rean.shopspring.pojo.Banner;
-import com.rean.shopspring.pojo.Category;
 import com.rean.shopspring.pojo.Goods;
+import com.rean.shopspring.pojo.HomeCategoryGoodsResponse;
 import com.rean.shopspring.pojo.Result;
+import com.rean.shopspring.service.GoodsService;
 import com.rean.shopspring.service.HomeService;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -47,5 +49,11 @@ public class HomeController {
     public Result<Map<String,Object>> getSubCategories(@RequestParam("id") String id){
         Map<String,Object> category=homeService.getSubCategoriesById(Integer.parseInt(id));
         return Result.success(category);
+    }
+
+    @RequestMapping("/goods")
+    @ResponseBody
+    public Result<List<HomeCategoryGoodsResponse>> getGoodsAll(@Validated @RequestParam("limit") @Range(min=1,message = "参数错误") Integer limit){
+        return Result.success(homeService.getGoodsAll(limit));
     }
 }

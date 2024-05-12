@@ -94,4 +94,8 @@ public class GoodsServiceImpl implements GoodsService {
         return goodsListRelevant;
     }
 
+    @Override
+    public Integer getGoodsCountAll(){
+        return goodsMapper.getGoodsCount();
+    }
 }

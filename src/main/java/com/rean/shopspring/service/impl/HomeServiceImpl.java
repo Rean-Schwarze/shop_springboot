@@ -4,6 +4,7 @@ import com.rean.shopspring.mapper.HomeMapper;
 import com.rean.shopspring.pojo.Banner;
 import com.rean.shopspring.pojo.Category;
 import com.rean.shopspring.pojo.Goods;
+import com.rean.shopspring.pojo.HomeCategoryGoodsResponse;
 import com.rean.shopspring.service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class HomeServiceImpl implements HomeService {
         List<Category> categoryList=homeMapper.getAllCategories();
         for (Category category:categoryList){
             List<Category> subCategoryList=homeMapper.getSubCategoriesByParentId(category.getId());
-            List<Goods> goodsList=homeMapper.get8GoodsByCategory(category.getId());
+            List<Goods> goodsList=homeMapper.getGoodsByCategoryAndLimit(category.getId(),8);
             for (Goods good:goodsList){
                 String picture=homeMapper.getGoodsPicturesById(good.getId());
                 good.setPicture(picture);
@@ -90,5 +91,21 @@ public class HomeServiceImpl implements HomeService {
         result.put("picture",category.getPicture());
         result.put("children",result_sub);
         return result;
+    }
+
+    @Override
+    public List<HomeCategoryGoodsResponse> getGoodsAll(Integer limit){
+        List<HomeCategoryGoodsResponse> categoryList=homeMapper.getAllCategories2();
+        for (HomeCategoryGoodsResponse category:categoryList){
+            List<Goods> goodsList=homeMapper.getGoodsByCategoryAndLimit(category.getId(), limit);
+            List<HomeCategoryGoodsResponse.GoodsLite> list=new ArrayList<>();
+            for (Goods good:goodsList){
+                String picture=homeMapper.getGoodsPicturesById(good.getId());
+                HomeCategoryGoodsResponse.GoodsLite goods=new HomeCategoryGoodsResponse.GoodsLite(good.getId(),good.getName(),good.getDesc(),picture,good.getPrice());
+                list.add(goods);
+            }
+            category.setGoods(list);
+        }
+        return categoryList;
     }
 }

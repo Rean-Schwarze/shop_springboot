@@ -3,6 +3,7 @@ package com.rean.shopspring.mapper;
 import com.rean.shopspring.pojo.Banner;
 import com.rean.shopspring.pojo.Category;
 import com.rean.shopspring.pojo.Goods;
+import com.rean.shopspring.pojo.HomeCategoryGoodsResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -13,6 +14,9 @@ public interface HomeMapper {
     @Select("select * from category")
     List<Category> getAllCategories();
 
+    @Select("select * from category")
+    List<HomeCategoryGoodsResponse> getAllCategories2();
+
     @Select("select * from sub_category")
     List<Category> getAllSubCategories();
 
@@ -22,8 +26,8 @@ public interface HomeMapper {
     @Select("select * from sub_category where parent_id=#{id};")
     List<Category> getSubCategoriesByParentId(int id);
 
-    @Select("select * from goods where category_id=#{id} limit 8")
-    List<Goods> get8GoodsByCategory(Integer id);
+    @Select("select * from goods where category_id=#{id} order by id desc limit #{limit}")
+    <T extends Goods> List<T> getGoodsByCategoryAndLimit(Integer id, Integer limit);
 
     @Select("select * from goods where sub_category_id=#{id}")
     List<Goods> getGoodsBySubCategoryId(Integer id);
