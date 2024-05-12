@@ -113,6 +113,8 @@ public class SellerController {
                 result.put("skus",goods.getSkus());
                 goodsList.add(result);
             }
+            String value="goods category_id:"+category_id.toString()+" page:"+page.toString()+" pageSize:"+pageSize.toString();
+            logService.logSeller(seller_id,IpUtil.getIpAddr(servletRequest),"get",value);
             return Result.success(goodsList);
         }
         else{
@@ -131,7 +133,9 @@ public class SellerController {
         for(Sku sku: request.getSkus()){
             if(sku.getSpecs().size()!=specs_size){ return Result.error("规格数目不符"); }
         }
-        sellerService.addGoods(seller_id,request);
+        Integer goods_id=sellerService.addGoods(seller_id,request);
+        String value="goods id:"+goods_id.toString()+" name:"+request.getName();
+        logService.logSeller(seller_id,IpUtil.getIpAddr(servletRequest),"post add",value);
         return Result.success();
     }
 
@@ -141,6 +145,8 @@ public class SellerController {
     public Result deleteGoodsFake(@RequestParam("id") Integer id){
         Integer seller_id= getSellerId();
         sellerService.deleteGoodsFake(id,seller_id);
+        String value="goods id:"+id.toString();
+        logService.logSeller(seller_id,IpUtil.getIpAddr(servletRequest),"delete fake",value);
         return Result.success();
     }
 
@@ -149,9 +155,12 @@ public class SellerController {
     @ResponseBody
     public Result updateGoodsPriceAndInventory(@RequestBody SellerSkuRequest request){
         Integer seller_id= getSellerId();
+        StringBuilder value=new StringBuilder("sku goods_id:"+request.getGoods_id().toString());
         for(Sku sku:request.getSkus()){
+            value.append(" skuId:").append(sku.getId()).append("|price:").append(sku.getPrice()).append("|inventory:").append(sku.getInventory().toString());
             sellerService.updateGoodsPriceAndInventory(sku.getId(),sku.getPrice(),sku.getInventory(),request.getGoods_id(),seller_id);
         }
+        logService.logSeller(seller_id,IpUtil.getIpAddr(servletRequest),"update",value.toString());
         return Result.success();
     }
 
@@ -166,6 +175,8 @@ public class SellerController {
         Integer total=sellerService.getOrderItemCounts(seller_id,orderState);
         Integer start=(page-1)*pageSize;
         if(start<total){
+            String value="order orderState:"+orderState.toString()+" page:"+page.toString()+" pageSize:"+pageSize.toString();
+            logService.logSeller(seller_id,IpUtil.getIpAddr(servletRequest),"get",value);
             return Result.success(sellerService.getOrderLists(seller_id,orderState,start,pageSize));
         }
         else{

@@ -16,7 +16,7 @@ public interface SellerService {
 
     List<Integer> getSellGoodsId(int seller_id, int category_id);
 
-    void addGoods(int seller_id, SellerGoodsRequest request);
+    Integer addGoods(int seller_id, SellerGoodsRequest request);
 
     void deleteGoodsFake(Integer id, Integer seller_id);
 

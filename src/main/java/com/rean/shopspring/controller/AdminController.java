@@ -37,10 +37,6 @@ public class AdminController {
     @Autowired
     private HttpServletRequest servletRequest;
 
-    private Integer getAdminId(){
-        return UserUtil.getUserId();
-    }
-
     @PostMapping("/login")
     @ResponseBody
     public Result login(@Validated @RequestBody UserLoginRequest request){
@@ -84,6 +80,8 @@ public class AdminController {
                 List<SellerCategory> sellerCategories=sellerService.getSellCategory(r.getId());
                 r.setCategory(sellerCategories);
             }
+            String value="seller brandId:"+brand_id.toString()+" page"+page.toString()+" pageSize:"+pageSize.toString();
+            logService.logAdmin(UserUtil.getUserId(),IpUtil.getIpAddr(servletRequest),"get",value);
             return Result.success(responses);
         }
         else{
@@ -96,7 +94,10 @@ public class AdminController {
     public Result<Integer> sellerRegister(@Validated @RequestBody SellerRegisterRequest request){
         Seller tmp=sellerService.findByName(request.getName());
         if(tmp==null){
-            return Result.success(adminService.sellerRegister(request));
+            Integer seller_id=adminService.sellerRegister(request);
+            String value="seller id:"+seller_id.toString();
+            logService.logAdmin(UserUtil.getUserId(),IpUtil.getIpAddr(servletRequest),"register",value);
+            return Result.success(seller_id);
         }
         else{
             return Result.error("用户已存在！");
@@ -109,6 +110,8 @@ public class AdminController {
         Seller seller=sellerService.findById(request.getId());
         if(seller!=null){
             sellerService.updatePassword(request.getId(), request.getNewPassword());
+            String value="seller_password seller_id:"+request.getId().toString();
+            logService.logAdmin(UserUtil.getUserId(),IpUtil.getIpAddr(servletRequest),"update",value);
             return Result.success();
         }
         else{
@@ -122,6 +125,8 @@ public class AdminController {
         Seller seller=sellerService.findById(id);
         if(seller!=null){
             adminService.deleteSellerFake(id);
+            String value="seller id:"+id.toString();
+            logService.logAdmin(UserUtil.getUserId(),IpUtil.getIpAddr(servletRequest),"delete fake",value);
             return Result.success();
         }
         else {

@@ -87,7 +87,7 @@ public class SellerServiceImpl implements SellerService {
     }
 
     // 添加商品
-    public void addGoods(int seller_id, SellerGoodsRequest request){
+    public Integer addGoods(int seller_id, SellerGoodsRequest request){
         // 首先获取品牌id
         Integer brand_id=sellerMapper.getSellBrandId(seller_id);
 
@@ -139,6 +139,8 @@ public class SellerServiceImpl implements SellerService {
 
         // 修改goods价格
         goodsMapper.updateGoodsPrice(String.valueOf(minPrice),String.valueOf(minPrice),id);
+
+        return id;
     }
 
     // 删除商品（伪

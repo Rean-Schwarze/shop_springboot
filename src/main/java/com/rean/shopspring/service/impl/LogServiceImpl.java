@@ -26,4 +26,18 @@ public class LogServiceImpl implements LogService {
         Log log=new Log("user",id,time,ip,"tp",value);
         logMapper.addLog(log);
     }
+
+    @Override
+    public void logSeller(Integer id, String ip, String type, String value){
+        Timestamp time=new Timestamp(System.currentTimeMillis());
+        Log log=new Log("seller",id,time,ip,type,value);
+        logMapper.addLog(log);
+    }
+
+    @Override
+    public void logAdmin(Integer id, String ip, String type, String value){
+        Timestamp time=new Timestamp(System.currentTimeMillis());
+        Log log=new Log("admin",id,time,ip,type,value);
+        logMapper.addLog(log);
+    }
 }
