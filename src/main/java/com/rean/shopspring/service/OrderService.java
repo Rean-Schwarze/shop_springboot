@@ -15,4 +15,6 @@ public interface OrderService {
     int getUserOrderCountsByState(int user_id, int orderState);
 
     List<Map<String,Object>> getUserOrder(int user_id,int start,int size,int orderState);
+
+    void updateOrderState(Integer order_id,Integer orderState);
 }

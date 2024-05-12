@@ -97,9 +97,9 @@ public class SellerController {
                     int stock=sku.getInventory();
                     totalStock+=stock;
                     int sales=sku.getSalesCount();
-                    totalSales+=(sales+sku.getOldSalesCount());
+                    totalSales+=sales;
                     int volume=sku.getSalesVolume();
-                    totalVolume+=(volume+sales*Integer.parseInt(sku.getPrice()));
+                    totalVolume+=volume;
                 }
                 // 拼接结果
                 Map<String,Object> result=new HashMap<>();

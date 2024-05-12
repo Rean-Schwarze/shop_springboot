@@ -15,6 +15,7 @@ import com.rean.shopspring.mapper.UserMapper;
 import com.rean.shopspring.pojo.AliPay;
 import com.rean.shopspring.pojo.Result;
 import com.rean.shopspring.service.EmailService;
+import com.rean.shopspring.service.OrderService;
 import com.rean.shopspring.utils.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class AliPayController {
     private EmailService emailService;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private OrderService orderService;
 
 //    生成支付页面
     @CrossOrigin
@@ -92,9 +95,8 @@ public class AliPayController {
                 System.out.println("买家付款时间: " + params.get("gmt_payment"));
                 System.out.println("买家付款金额: " + params.get("buyer_pay_amount"));
 
-                // 更新订单状态
-                orderMapper.updateOrderStateById(Integer.parseInt(tradeNo),2);
-                orderMapper.updateOrderItemStateByOrderId(Integer.parseInt(tradeNo),2);
+                // 更新订单状态（可能会有死锁相关问题，后面再改吧！）
+                orderService.updateOrderState(Integer.parseInt(tradeNo),2);
             }
         }
         return "success";

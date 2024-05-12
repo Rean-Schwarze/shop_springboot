@@ -43,6 +43,10 @@ public interface OrderMapper {
     @Select("select * from order_item where user_id=#{user_id} and order_id=#{order_id}")
     List<OrderItem> getOrderItemByUserIdAndOrderId(int user_id, int order_id);
 
+    // 获取同一订单内所有订单项
+    @Select("select * from order_item where order_id=#{order_id}")
+    List<OrderItem> getOrderItemByOrderId(Integer order_id);
+
     @Select("select count(*) from order_item where brand_id=#{brand_id}")
     Integer getOrderItemCounts(Integer brand_id);
 

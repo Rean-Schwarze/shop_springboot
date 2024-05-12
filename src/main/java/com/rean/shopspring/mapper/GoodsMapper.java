@@ -63,6 +63,10 @@ public interface GoodsMapper {
     @Select("select * from sku where goods_id=#{id}")
     List<Sku> getSkuByGoodsId(Integer id);
 
+    // 获取sku
+    @Select("select * from sku where id=#{id}")
+    Sku getSkuById(Integer id);
+
     @Select("select * from specs_values where id = (select specs_values_id from sku where id=#{id})")
     Spec_values getSkuSpecBySkuId(Integer id);
 
@@ -138,6 +142,10 @@ public interface GoodsMapper {
 //    ----------------------------------------
 //    修改相关
 //    ----------------------------------------
+
+    // 修改sku销售数量、销售额
+    @Update("update sku set salesCount=#{count}, salesVolume=#{volume} where id=#{skuId}")
+    void updateSkuCountAndVolume(Integer skuId,Integer count,Integer volume);
 
     // 修改库存
     @Update("update sku set inventory=#{count} where id=#{id}")

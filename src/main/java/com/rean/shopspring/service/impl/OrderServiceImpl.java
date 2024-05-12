@@ -172,4 +172,21 @@ public class OrderServiceImpl implements OrderService {
 
         return completeOrderList;
     }
+
+    // 修改订单状态
+    public void updateOrderState(Integer order_id,Integer orderState){
+        orderMapper.updateOrderStateById(order_id,orderState);
+        orderMapper.updateOrderItemStateByOrderId(order_id,orderState);
+        // 已付款，更新sku
+        if(orderState==2){
+            List<OrderItem> orderItemList=orderMapper.getOrderItemByOrderId(order_id);
+            for(OrderItem orderItem:orderItemList){
+                // 是否考虑上锁？
+                Sku sku=goodsMapper.getSkuById(orderItem.getSkuId());
+                Integer count=sku.getSalesCount()+orderItem.getCount();
+                Integer volume= sku.getSalesVolume()+orderItem.getCount()*Integer.parseInt(sku.getPrice());
+                goodsMapper.updateSkuCountAndVolume(orderItem.getSkuId(),count,volume);
+            }
+        }
+    }
 }
