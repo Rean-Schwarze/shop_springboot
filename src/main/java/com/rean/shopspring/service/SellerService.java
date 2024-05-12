@@ -14,7 +14,7 @@ public interface SellerService {
 
     <T extends Category> List<T> getSellCategory(int seller_id);
 
-    List<Integer> getSellGoodsId(int seller_id, int category_id);
+    List<Integer> getSellGoodsId(int seller_id, int category_id, String type);
 
     Integer addGoods(int seller_id, SellerGoodsRequest request);
 

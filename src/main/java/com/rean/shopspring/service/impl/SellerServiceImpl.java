@@ -80,10 +80,32 @@ public class SellerServiceImpl implements SellerService {
     }
 
     // 获取负责分类下的商品id列表
-    public List<Integer> getSellGoodsId(int seller_id, int category_id){
+    public List<Integer> getSellGoodsId(int seller_id, int category_id, String type){
         // 首先获取品牌id
         Integer brand_id=sellerMapper.getSellBrandId(seller_id);
-        return goodsMapper.getGoodsIdByBrandAndCategory(brand_id,category_id);
+        if(Objects.equals(type, "main")){
+            return goodsMapper.getGoodsIdByBrandAndCategory(brand_id,category_id);
+        }
+        else if(Objects.equals(type,"sub")){
+            return goodsMapper.getGoodsIdByBrandAndSubCategory(brand_id,category_id);
+        }
+        else{ // 获取所有负责分类下的商品
+            List<SellerCategory> categoryList=getSellCategory(seller_id);
+            Set<Integer> goodsSet=new HashSet<>();
+            for(SellerCategory sellerCategory:categoryList){
+                if(sellerCategory.isAllSub()){
+                    List<Integer> tmp=goodsMapper.getGoodsIdByBrandAndCategory(brand_id,sellerCategory.getId());
+                    goodsSet.addAll(tmp);
+                }
+                else{
+                    for(Category sub:sellerCategory.getChildren()){
+                        List<Integer> tmp=goodsMapper.getGoodsIdByBrandAndSubCategory(brand_id,sub.getId());
+                        goodsSet.addAll(tmp);
+                    }
+                }
+            }
+            return new ArrayList<>(goodsSet);
+        }
     }
 
     // 添加商品

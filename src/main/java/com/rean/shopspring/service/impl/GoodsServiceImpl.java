@@ -22,6 +22,7 @@ public class GoodsServiceImpl implements GoodsService {
         Goods goods=goodsMapper.getGoodsById(id);
         goods.setBrand(goodsMapper.getBrandById(goods.getBrandId()));
         goods.setMainPictures(goodsMapper.getMainPicturesByGoodsId(goods.getId()));
+        goods.setPicture(goods.getMainPictures().get(0));
 
 //        获取specs
         List<Specs> specs=goodsMapper.getSpcesByGoodsId(goods.getId());

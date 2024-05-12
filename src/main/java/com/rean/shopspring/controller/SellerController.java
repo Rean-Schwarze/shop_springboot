@@ -76,10 +76,11 @@ public class SellerController {
     @ResponseBody
     public Result<List<Map<String,Object>>> getGoods(@Validated @RequestParam("id") @Range(min=1,message = "参数错误") Integer category_id,
             @Validated @RequestParam("page") @Range(min=1,message = "参数错误") Integer page,
-            @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize){
+            @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize,
+                                                     @RequestParam("type") String type){
         Integer seller_id= getSellerId();
         // 获取负责的商品id列表
-        List<Integer> goodsIds=sellerService.getSellGoodsId(seller_id,category_id);
+        List<Integer> goodsIds=sellerService.getSellGoodsId(seller_id,category_id, type);
         // 获取商品属性
         List<Map<String,Object>> goodsList=new ArrayList<>();
         int start=(page-1)*pageSize;
@@ -120,6 +121,17 @@ public class SellerController {
         else{
             return Result.error("参数超出范围！");
         }
+    }
+
+    // 获取负责商品总数
+    @GetMapping("/goods/count")
+    @ResponseBody
+    public Result<Integer> getGoodsCount(@Validated @RequestParam("id") @Range(min=1,message = "参数错误") Integer category_id,
+                                         @RequestParam("type") String type){
+        Integer seller_id= getSellerId();
+        // 获取负责的商品id列表
+        List<Integer> goodsIds=sellerService.getSellGoodsId(seller_id,category_id, type);
+        return Result.success(goodsIds.size());
     }
 
     // 添加商品
