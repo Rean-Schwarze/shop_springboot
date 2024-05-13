@@ -126,7 +126,7 @@ public class SellerController {
     // 获取负责商品总数
     @GetMapping("/goods/count")
     @ResponseBody
-    public Result<Integer> getGoodsCount(@Validated @RequestParam("id") @Range(min=1,message = "参数错误") Integer category_id,
+    public Result<Integer> getGoodsCount(@RequestParam("id") Integer category_id,
                                          @RequestParam("type") String type){
         Integer seller_id= getSellerId();
         // 获取负责的商品id列表
