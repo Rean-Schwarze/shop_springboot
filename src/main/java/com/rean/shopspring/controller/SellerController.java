@@ -137,7 +137,7 @@ public class SellerController {
     // 添加商品
     @PostMapping("/goods")
     @ResponseBody
-    public Result addGoods(@Validated @RequestBody SellerGoodsRequest request){
+    public Result<Integer> addGoods(@Validated @RequestBody SellerGoodsRequest request){
         Integer seller_id= getSellerId();
         // 检查specs、sku里的specs数目
         int specs_size=request.getSpecs().size();
@@ -148,7 +148,7 @@ public class SellerController {
         Integer goods_id=sellerService.addGoods(seller_id,request);
         String value="goods id:"+goods_id.toString()+" name:"+request.getName();
         logService.logSeller(seller_id,IpUtil.getIpAddr(servletRequest),"post add",value);
-        return Result.success();
+        return Result.success(goods_id);
     }
 
     // 删除商品（伪）

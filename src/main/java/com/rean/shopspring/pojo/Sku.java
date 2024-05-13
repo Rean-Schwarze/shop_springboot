@@ -1,5 +1,6 @@
 package com.rean.shopspring.pojo;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -25,5 +26,6 @@ public class Sku {
     private Integer goodsId;
     private String attrsText;
     @NotNull
+    @Valid
     private List<Spec_sku> specs;
 }

@@ -2,6 +2,7 @@ package com.rean.shopspring.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -32,9 +33,11 @@ public class SellerGoodsRequest {
     private Integer subCategory2;
 
     @NotNull
+    @Valid
     private List<Specs> specs;
 
     @NotNull
+    @Valid
     private List<Sku> skus;
 
     @JsonProperty("isPreSale")
