@@ -74,7 +74,7 @@ public class SellerController {
     // 获取负责商品
     @GetMapping("/goods")
     @ResponseBody
-    public Result<List<Map<String,Object>>> getGoods(@Validated @RequestParam("id") @Range(min=1,message = "参数错误") Integer category_id,
+    public Result<List<Map<String,Object>>> getGoods(@RequestParam("id") Integer category_id,
             @Validated @RequestParam("page") @Range(min=1,message = "参数错误") Integer page,
             @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize,
                                                      @RequestParam("type") String type){
