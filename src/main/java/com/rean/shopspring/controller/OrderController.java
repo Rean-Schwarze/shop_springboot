@@ -2,9 +2,13 @@ package com.rean.shopspring.controller;
 
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.CartService;
+import com.rean.shopspring.service.LogService;
 import com.rean.shopspring.service.OrderService;
 import com.rean.shopspring.service.UserService;
+import com.rean.shopspring.utils.IpUtil;
 import com.rean.shopspring.utils.ThreadLocalUtil;
+import com.rean.shopspring.utils.UserUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +25,10 @@ public class OrderController {
     private CartService cartService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private LogService logService;
+    @Autowired
+    private HttpServletRequest servletRequest;
 
     @CrossOrigin
     @RequestMapping("/member/order/pre")
@@ -57,7 +65,14 @@ public class OrderController {
     @RequestMapping(value = "/member/order",method = RequestMethod.POST)
     @ResponseBody
     public Result<Order> postOrder(@RequestBody Map<String,Object> orderOption){
-        return Result.success(orderService.postOrder(orderOption));
+        Order order=orderService.postOrder(orderOption);
+        logService.logBuy(UserUtil.getUserId(), IpUtil.getIpAddr(servletRequest),"order","id:"+order.getId());
+        // 逐项添加日志
+        List<OrderItem> orderItemList=orderService.getOrderItemByOrderId(order.getId());
+        for(OrderItem orderItem:orderItemList){
+            logService.logBuy(UserUtil.getUserId(),IpUtil.getIpAddr(servletRequest),"buy","goods id:"+orderItem.getGoodsId()+" count:"+orderItem.getCount());
+        }
+        return Result.success(order);
     }
 
     @CrossOrigin

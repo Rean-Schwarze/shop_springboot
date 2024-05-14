@@ -189,4 +189,10 @@ public class OrderServiceImpl implements OrderService {
             }
         }
     }
+
+    // 获取订单项
+    @Override
+    public List<OrderItem> getOrderItemByOrderId(Integer order_id){
+        return orderMapper.getOrderItemByOrderId(order_id);
+    }
 }

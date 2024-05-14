@@ -47,8 +47,12 @@ public interface OrderMapper {
     @Select("select * from order_item where order_id=#{order_id}")
     List<OrderItem> getOrderItemByOrderId(Integer order_id);
 
+    // 获取订单项总数
     @Select("select count(*) from order_item where brand_id=#{brand_id}")
     Integer getOrderItemCounts(Integer brand_id);
+
+    @Select("select count(*) from order_item where goods_id=#{goods_id}")
+    Integer getOrderItemCountsByGoodsId(Integer goods_id);
 
     @Select("select count(*) from order_item where brand_id=#{brand_id} and orderState=#{orderState}")
     Integer getOrderItemCountsByState(Integer brand_id, Integer orderState);
@@ -62,6 +66,9 @@ public interface OrderMapper {
     @Select("select * from order_item where brand_id=#{brand_id} and orderState=#{orderState} " +
             "order by createTime desc limit #{start},#{size}")
     List<OrderItem> getOrderItemByRangeAndState(Integer brand_id,Integer start,Integer size,Integer orderState);
+
+    @Select("select count(*) from order_item where goods_id=#{goods_id}")
+    Integer getOrderItemCountByGoodsId(Integer goods_id);
 
 //    ------------------------
 //    添加相关
