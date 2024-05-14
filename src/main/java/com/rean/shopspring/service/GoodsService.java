@@ -8,6 +8,5 @@ import java.util.Map;
 public interface GoodsService {
     Goods getGoodsById(Integer id);
     List<Map<String,String>> getGoodsByRelevant(Integer limit);
-
-    Integer getGoodsCountAll();
+    List<Integer> getGoodsIds(Integer category_id,String type);
 }

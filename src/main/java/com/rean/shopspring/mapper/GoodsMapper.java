@@ -3,10 +3,7 @@ package com.rean.shopspring.mapper;
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.pojo.Property;
 import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.type.JdbcType;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
@@ -33,6 +30,18 @@ public interface GoodsMapper {
     // 获取商品id（传入：品牌id、二级分类id）
     @Select("select id from goods where brand_id=#{brand_id} and (sub_category_id=#{category_id} or sub_category_id2=#{category_id}) and isValid=true")
     List<Integer> getGoodsIdByBrandAndSubCategory(Integer brand_id,Integer category_id);
+
+    // 获取所有商品id
+    @Select("select id from goods where isValid=true")
+    List<Integer> getGoodsIdsAll();
+
+    // 获取商品id（传入：一级分类id）
+    @Select("select id from goods where category_id=#{category_id} and isValid=true")
+    List<Integer> getGoodsIdsByCategory(Integer category_id);
+
+    // 获取商品id（传入：二级分类id）
+    @Select("select id from goods where (sub_category_id=#{category_id} or sub_category_id2=#{category_id}) and isValid=true")
+    List<Integer> getGoodsIdsBySubCategory(Integer category_id);
 
     @Select("select * from brand where id=#{id}")
     Brand getBrandById(Integer id);
@@ -93,7 +102,7 @@ public interface GoodsMapper {
     List<Goods> getGoodsByRandom(Integer limit);
 
 //    获取商品总数
-    @Select("select count(*) from goods")
+    @Select("select count(*) from goods where isValid=true")
     int getGoodsCount();
 
 //    根据skuId获取单个商品的封面、描述、名称

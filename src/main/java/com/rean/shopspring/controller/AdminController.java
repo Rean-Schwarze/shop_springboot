@@ -2,6 +2,7 @@ package com.rean.shopspring.controller;
 
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.AdminService;
+import com.rean.shopspring.service.GoodsService;
 import com.rean.shopspring.service.LogService;
 import com.rean.shopspring.service.SellerService;
 import com.rean.shopspring.utils.*;
@@ -13,6 +14,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,9 @@ public class AdminController {
 
     @Autowired
     private SellerService sellerService;
+
+    @Autowired
+    private GoodsService goodsService;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -132,5 +137,48 @@ public class AdminController {
         else {
             return Result.error("用户不存在！");
         }
+    }
+
+    // 获取商品总数
+    @GetMapping("/goods/count")
+    @ResponseBody
+    public Result<Integer> getGoodsCount(@RequestParam("id") Integer category_id,
+                                         @RequestParam("type") String type){
+        return Result.success(goodsService.getGoodsIds(category_id,type).size());
+    }
+
+    // 获取商品
+    @GetMapping("/goods")
+    @ResponseBody
+    public Result<List<AdSeGoodsResponse>> getGoods(@RequestParam("id") Integer category_id,
+                                                     @Validated @RequestParam("page") @Range(min=1,message = "参数错误") Integer page,
+                                                     @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize,
+                                                     @RequestParam("type") String type){
+        // 获取负责的商品id列表
+        List<Integer> goodsIds=goodsService.getGoodsIds(category_id,type);
+        // 获取商品属性
+        List<AdSeGoodsResponse> goodsList=new ArrayList<>();
+        int start=(page-1)*pageSize;
+        if(start<goodsIds.size()){
+            String value=GoodsUtil.getGoodsForEach(category_id, page, pageSize, goodsIds, goodsList, start, goodsService);
+            logService.logAdmin(UserUtil.getUserId(),IpUtil.getIpAddr(servletRequest),"get",value);
+            return Result.success(goodsList);
+        }
+        else{
+            return Result.error("参数超出范围！");
+        }
+    }
+
+    // 修改商品价格、库存
+    @PostMapping("/modify/goods/sku")
+    @ResponseBody
+    public Result updateGoodsPriceAndInventory(@RequestBody SellerSkuRequest request){
+        StringBuilder value=new StringBuilder("sku goods_id:"+request.getGoods_id().toString());
+        for(Sku sku:request.getSkus()){
+            value.append(" skuId:").append(sku.getId()).append("|price:").append(sku.getPrice()).append("|inventory:").append(sku.getInventory().toString());
+            sellerService.updateGoodsPriceAndInventory(sku.getId(),sku.getPrice(),sku.getInventory(),request.getGoods_id(),UserUtil.getUserId());
+        }
+        logService.logSeller(UserUtil.getUserId(),IpUtil.getIpAddr(servletRequest),"update",value.toString());
+        return Result.success();
     }
 }

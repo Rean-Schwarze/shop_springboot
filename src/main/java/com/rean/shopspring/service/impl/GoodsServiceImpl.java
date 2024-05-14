@@ -98,7 +98,9 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public Integer getGoodsCountAll(){
-        return goodsMapper.getGoodsCount();
+    public List<Integer> getGoodsIds(Integer category_id, String type){
+        if(Objects.equals(type, "all")) return goodsMapper.getGoodsIdsAll();
+        else if(Objects.equals(type,"main")) return goodsMapper.getGoodsIdsByCategory(category_id);
+        else return goodsMapper.getGoodsIdsBySubCategory(category_id);
     }
 }
