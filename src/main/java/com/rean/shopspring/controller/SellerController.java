@@ -72,7 +72,7 @@ public class SellerController {
     // 获取负责商品
     @GetMapping("/goods")
     @ResponseBody
-    public Result<List<Map<String,Object>>> getGoods(@RequestParam("id") Integer category_id,
+    public Result<List<AdSeGoodsResponse>> getGoods(@RequestParam("id") Integer category_id,
             @Validated @RequestParam("page") @Range(min=1,message = "参数错误") Integer page,
             @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize,
                                                      @RequestParam("type") String type){
@@ -80,39 +80,10 @@ public class SellerController {
         // 获取负责的商品id列表
         List<Integer> goodsIds=sellerService.getSellGoodsId(seller_id,category_id, type);
         // 获取商品属性
-        List<Map<String,Object>> goodsList=new ArrayList<>();
+        List<AdSeGoodsResponse> goodsList=new ArrayList<>();
         int start=(page-1)*pageSize;
         if(start<goodsIds.size()){
-            for(;start<Integer.min(page*pageSize,goodsIds.size());start++){
-                Integer goods_id=goodsIds.get(start);
-                Goods goods=goodsService.getGoodsById(goods_id);
-                // 计算总库存、总销售
-                int totalStock=0;
-                int totalSales=0;
-                int totalVolume=0;
-                List<Sku> skus = goods.getSkus();
-                for(Sku sku:skus){
-                    int stock=sku.getInventory();
-                    totalStock+=stock;
-                    int sales=sku.getSalesCount();
-                    totalSales+=sales;
-                    int volume=sku.getSalesVolume();
-                    totalVolume+=volume;
-                }
-                // 拼接结果
-                Map<String,Object> result=new HashMap<>();
-                result.put("id",goods.getId());
-                result.put("name",goods.getName());
-                result.put("price",goods.getPrice());
-                result.put("picture",goods.getPicture());
-                result.put("totalStock",totalStock);
-                result.put("totalSales",totalSales);
-                result.put("totalVolume",totalVolume);
-                result.put("specs",goods.getSpecs());
-                result.put("skus",goods.getSkus());
-                goodsList.add(result);
-            }
-            String value="goods category_id:"+category_id.toString()+" page:"+page.toString()+" pageSize:"+pageSize.toString();
+            String value=GoodsUtil.getGoodsForEach(category_id, page, pageSize, goodsIds, goodsList, start, goodsService);
             logService.logSeller(seller_id,IpUtil.getIpAddr(servletRequest),"get",value);
             return Result.success(goodsList);
         }
