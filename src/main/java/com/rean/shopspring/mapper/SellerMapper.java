@@ -32,7 +32,7 @@ public interface SellerMapper {
 //    ------------------------------
 
     // 销售人员账号注册
-    @Insert("insert into seller(name,password,avatar,isMaster,brand_id) values (#{name},#{md5Password},#{avatar},#{isMaster},#{brandId})")
+    @Insert("insert into seller(name,password,avatar,brand_id) values (#{name},#{md5Password},#{avatar},#{brandId})")
     @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
     void sellerRegister(SellerRegisterRequest request);
 
