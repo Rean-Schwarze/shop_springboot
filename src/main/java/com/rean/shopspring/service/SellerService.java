@@ -23,6 +23,7 @@ public interface SellerService {
     void updateGoodsPriceAndInventory(Integer id, String price, Integer inventory, Integer goods_id, Integer seller_id);
 
     Integer getOrderItemCounts(Integer seller_id, Integer orderState);
+    Integer getOrderItemCounts(Integer goods_id);
 
     SellerOrderResponse getOrderLists(Integer seller_id, Integer orderState, Integer start, Integer pageSize);
 

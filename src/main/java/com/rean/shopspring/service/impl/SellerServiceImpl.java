@@ -197,6 +197,10 @@ public class SellerServiceImpl implements SellerService {
         }
     }
 
+    public Integer getOrderItemCounts(Integer goods_id){
+        return orderMapper.getOrderItemCountByGoodsId(goods_id);
+    }
+
     // 获取负责商品相关订单项目
     public SellerOrderResponse getOrderLists(Integer seller_id, Integer orderState, Integer start, Integer pageSize){
         Integer brand_id=sellerMapper.getSellBrandId(seller_id);

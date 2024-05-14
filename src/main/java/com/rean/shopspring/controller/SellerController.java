@@ -9,12 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/seller")
@@ -190,6 +188,28 @@ public class SellerController {
             String value="order orderState:"+orderState.toString()+" page:"+page.toString()+" pageSize:"+pageSize.toString();
             logService.logSeller(seller_id,IpUtil.getIpAddr(servletRequest),"get",value);
             return Result.success(sellerService.getOrderLists(seller_id,orderState,start,pageSize));
+        }
+        else{
+            return Result.error("参数超出范围");
+        }
+    }
+
+    // 获取用户日志（浏览/购买商品）
+    @GetMapping("/log/user")
+    @ResponseBody
+    public Result<LogTpAndBuyResponse> getLogTpAndBuy(@Validated @RequestParam("goods_id") @Range(min=1000000,message = "参数错误") Integer goods_id,
+                           @Validated @RequestParam("page") @Range(min=1,message = "参数错误") Integer page,
+                           @Validated @RequestParam("pageSize") @Range(min=1,message = "参数错误") Integer pageSize){
+        Integer total=logService.getLogTpAndBuyCount(goods_id);
+        LogTpAndBuyResponse response=new LogTpAndBuyResponse();
+        response.setTotal(total);
+
+        Integer start=(page-1)*pageSize;
+        if(start<total){
+            List<Log> logs=logService.getLogTpAndBuy(goods_id,start,pageSize);
+            response.setLogs(logs);
+            logService.logSeller(UserUtil.getUserId(),IpUtil.getIpAddr(servletRequest),"get","log tp&buy goods_id:"+goods_id+" page:"+page+" pageSize:"+pageSize);
+            return Result.success(response);
         }
         else{
             return Result.error("参数超出范围");
