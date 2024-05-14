@@ -10,6 +10,7 @@ import com.rean.shopspring.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.*;
 import static com.rean.shopspring.utils.GoodsUtil.getAttrsText;
 
@@ -222,8 +223,22 @@ public class SellerServiceImpl implements SellerService {
             SellerOrderResponse.Skus skus=new SellerOrderResponse.Skus(orderItem.getSkuId(),
                     goodsMapper.getMainPicturesByGoodsId(goods_id).get(0), goodsMapper.getNameByGoodsId(goods_id),
                     getAttrsText(orderItem.getSkuId(),goodsMapper),orderItem.getCount(),orderItem.getPayMoney());
+            Order order=orderMapper.getOrderById(orderItem.getOrderId());
+            // 更新付款倒计时
+            if(order.getCountdown()!=-1){
+                Timestamp currentTime=new Timestamp(System.currentTimeMillis());
+                Timestamp payLastTime=order.getPayLatestTime();
+                if(currentTime.before(payLastTime)){
+                    order.setCountdown((int) (payLastTime.getTime()-currentTime.getTime()));
+                    orderMapper.updateOrderCountdownById(order.getId(),order.getCountdown());
+                }
+                else{
+                    order.setCountdown(-1);
+                    orderMapper.updateOrderCountdownById(order.getId(),-1);
+                }
+            }
             SellerOrderResponse.Items items=new SellerOrderResponse.Items(orderItem.getId(),orderItem.getOrderId(),
-                    orderState,orderItem.getCreateTime(),skus,orderItem.getUserId());
+                    orderState,orderItem.getCreateTime(),order.getCountdown(),skus,orderItem.getUserId());
             itemsList.add(items);
         }
         response.setItems(itemsList);

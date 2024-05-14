@@ -1,5 +1,6 @@
 package com.rean.shopspring.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,7 +32,9 @@ public class SellerOrderResponse {
         private Integer id;
         private Integer order_id;
         private Integer orderState;
+        @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
         private Timestamp createTime;
+        private Integer countdown;
         private Skus skus;
         private Integer user_id;
     }
