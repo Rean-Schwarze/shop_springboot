@@ -1,5 +1,6 @@
 package com.rean.shopspring.pojo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -10,4 +11,6 @@ public class Brand {
     private String type;
     private String desc;
     private String place;
+    @JsonProperty("isValid")
+    private boolean isValid;
 }

@@ -35,8 +35,12 @@ public interface AdminMapper {
     List<Seller> getSellerByBrandId(Integer brand_id,Integer start,Integer pageSize, Boolean isValid);
 
     // 获取品牌信息
-    @Select("select * from brand where id=#{id}")
+    @Select("select * from brand where id=#{id} and isValid=true")
     Brand getBrandById(Integer id);
+
+    // 获取所有品牌
+    @Select("select * from brand where isValid=true")
+    List<Brand> getBrandsAll();
 
 //    -----------------------------
 //    修改相关

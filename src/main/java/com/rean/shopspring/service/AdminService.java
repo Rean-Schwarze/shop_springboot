@@ -2,6 +2,7 @@ package com.rean.shopspring.service;
 
 import com.rean.shopspring.pojo.Admin;
 import com.rean.shopspring.pojo.AdminSellerResponse;
+import com.rean.shopspring.pojo.Brand;
 import com.rean.shopspring.pojo.SellerRegisterRequest;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface AdminService {
     Integer sellerRegister(SellerRegisterRequest request);
 
     void deleteSellerFake(Integer id);
+
+    List<Brand> getBrandsAll();
 }

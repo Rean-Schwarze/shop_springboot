@@ -10,15 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/admin")
@@ -70,6 +66,18 @@ public class AdminController {
         logService.logLogin("admin",UserUtil.getUserId(),ip,"logout");
         UserUtil.logout(servletRequest.getHeader("Authorization"),stringRedisTemplate);
         return Result.success();
+    }
+
+    @GetMapping("/brand")
+    @ResponseBody
+    public Result<List<Brand>> getBrand(){
+        return Result.success(adminService.getBrandsAll());
+    }
+
+    @GetMapping("/seller/count")
+    @ResponseBody
+    public Result<Integer> getSellerCount(@Validated @RequestParam("brand_id") @Range(min=0,message = "参数错误") Integer brand_id){
+        return Result.success(adminService.getSellerCount(brand_id,true));
     }
 
     @GetMapping("/seller")

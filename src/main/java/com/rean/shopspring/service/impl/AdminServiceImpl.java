@@ -91,4 +91,10 @@ public class AdminServiceImpl implements AdminService {
     public void deleteSellerFake(Integer id){
         adminMapper.deleteSellerFake(id);
     }
+
+    // 获取品牌
+    @Override
+    public List<Brand> getBrandsAll(){
+        return adminMapper.getBrandsAll();
+    }
 }
