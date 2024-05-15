@@ -36,6 +36,8 @@ API Document：[https://3u4leyl0cw.apifox.cn](https://3u4leyl0cw.apifox.cn)
 
 所负责销售商品类别的销售状态信息的**监控**
 
+用户购买其所负责销售商品的 浏览/购买 的 **日志** 记录
+
 <br>
 
 所负责销售商品的图片上传
@@ -48,7 +50,7 @@ API Document：[https://3u4leyl0cw.apifox.cn](https://3u4leyl0cw.apifox.cn)
 
 对销售人员ID的登录口令的**重置**
 
-
+各个商品类别的销售统计报表， 销售状态，库存管理
 
 <br>
 
@@ -78,13 +80,13 @@ API Document：[https://3u4leyl0cw.apifox.cn](https://3u4leyl0cw.apifox.cn)
 
 ## 基于大数据的数据分析以及推荐系统
 
-
+暂无
 
 <br>
 
 ## 其他可选的附加功能
 
-
+反爬虫侦测和应对
 
 <br>
 
@@ -102,7 +104,17 @@ API Document：[https://3u4leyl0cw.apifox.cn](https://3u4leyl0cw.apifox.cn)
 
 取消订单
 
+确认收货、评价
+
 **关闭**窗口前发送日志（`beforeunload`只对刷新起作用）
+
+#### 浏览方面
+
+搜索
+
+收藏
+
+评论查看
 
 ……
 
@@ -111,6 +123,12 @@ API Document：[https://3u4leyl0cw.apifox.cn](https://3u4leyl0cw.apifox.cn)
 ### 销售人员
 
 所负责销售商品的**其他信息**的修改
+
+订单状态、信息修改
+
+销售统计
+
+工单系统
 
 ……
 
@@ -122,4 +140,22 @@ API Document：[https://3u4leyl0cw.apifox.cn](https://3u4leyl0cw.apifox.cn)
 
 销售人员注册 - 添加头像
 
+对销售人员负责商品类别的销售业绩的查询和监控
+
+各个商品类别的销售业绩的查询和统计
+
 ……
+
+### 大数据相关
+
+用户画像构建（从地域，购买力，主要购买物品类别等因素对用户的分类）
+
+用户行为分析、数据挖掘、个性化推荐（购买趋势预测与评估）
+
+商品销售趋势预测与评估
+
+销售异常的判别与实时监控
+
+数据的导入和导出
+
+数据分析结果的在线可视化
