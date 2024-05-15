@@ -1,5 +1,6 @@
 package com.rean.shopspring.controller;
 
+import cn.keking.anti_reptile.annotation.AntiReptile;
 import com.rean.shopspring.pojo.CartItem;
 import com.rean.shopspring.pojo.Result;
 import com.rean.shopspring.service.CartService;
@@ -22,6 +23,7 @@ public class CartController {
                 Integer.parseInt(orderItem.get("count"))));
     }
 
+    @AntiReptile
     @CrossOrigin
     @RequestMapping("/member/cartlist")
     @ResponseBody

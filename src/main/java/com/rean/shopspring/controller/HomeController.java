@@ -1,5 +1,6 @@
 package com.rean.shopspring.controller;
 
+import cn.keking.anti_reptile.annotation.AntiReptile;
 import com.rean.shopspring.pojo.Banner;
 import com.rean.shopspring.pojo.Goods;
 import com.rean.shopspring.pojo.HomeCategoryGoodsResponse;
@@ -30,6 +31,7 @@ public class HomeController {
         return Result.success(categoryList);
     }
 
+    @AntiReptile
     @RequestMapping("/new")
     @ResponseBody
     public Result<List<Goods>> getNewGoods(@RequestParam("limit") Integer limit){
@@ -37,6 +39,7 @@ public class HomeController {
         return Result.success(goodsList);
     }
 
+    @AntiReptile
     @RequestMapping("/banner")
     @ResponseBody
     public Result<List<Banner>> getBanners(){
@@ -51,6 +54,7 @@ public class HomeController {
         return Result.success(category);
     }
 
+    @AntiReptile
     @RequestMapping("/goods")
     @ResponseBody
     public Result<List<HomeCategoryGoodsResponse>> getGoodsAll(@Validated @RequestParam("limit") @Range(min=1,message = "参数错误") Integer limit){

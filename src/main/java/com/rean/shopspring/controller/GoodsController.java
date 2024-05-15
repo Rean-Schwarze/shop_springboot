@@ -1,5 +1,6 @@
 package com.rean.shopspring.controller;
 
+import cn.keking.anti_reptile.annotation.AntiReptile;
 import com.rean.shopspring.pojo.Goods;
 import com.rean.shopspring.pojo.Result;
 import com.rean.shopspring.service.GoodsService;
@@ -17,6 +18,7 @@ public class GoodsController {
     @Autowired
     private GoodsService goodsService;
 
+    @AntiReptile
     @RequestMapping("/goods")
     @ResponseBody
     public Result<Goods> getGoodsById(@RequestParam("id") String id){
@@ -24,6 +26,7 @@ public class GoodsController {
         return Result.success(goods);
     }
 
+    @AntiReptile
     @RequestMapping("/goods/relevant")
     @ResponseBody
     public Result<List<Map<String,String>>> getRelevantGoods(@RequestParam("limit") int limit){

@@ -1,5 +1,6 @@
 package com.rean.shopspring.controller;
 
+import cn.keking.anti_reptile.annotation.AntiReptile;
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.CartService;
 import com.rean.shopspring.service.LogService;
@@ -75,6 +76,7 @@ public class OrderController {
         return Result.success(order);
     }
 
+    @AntiReptile
     @CrossOrigin
     @RequestMapping("/member/order/{id}")
     @ResponseBody
@@ -82,6 +84,7 @@ public class OrderController {
         return Result.success(orderService.getOrder(Integer.parseInt(id)));
     }
 
+    @AntiReptile
     @CrossOrigin
     @GetMapping("/member/order")
     @ResponseBody

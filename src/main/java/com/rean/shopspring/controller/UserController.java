@@ -1,5 +1,6 @@
 package com.rean.shopspring.controller;
 
+import cn.keking.anti_reptile.annotation.AntiReptile;
 import com.rean.shopspring.pojo.*;
 import com.rean.shopspring.service.LogService;
 import com.rean.shopspring.service.UserService;
@@ -96,6 +97,7 @@ public class UserController {
     }
 
 //    获取用户收货地址
+    @AntiReptile
     @GetMapping("/address")
     @ResponseBody
     public Result<List<Address>> getAddress(){

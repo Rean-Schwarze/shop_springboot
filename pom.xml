@@ -130,6 +130,13 @@
             <version>1.3.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.keking.project</groupId>
+            <artifactId>kk-anti-reptile</artifactId>
+            <version>1.0.0-RELEASE</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
