@@ -1,5 +1,6 @@
 package com.rean.shopspring.service.impl;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rean.shopspring.mapper.CartMapper;
 import com.rean.shopspring.mapper.GoodsMapper;
 import com.rean.shopspring.mapper.OrderMapper;
@@ -143,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
 //            封装返回结果
             Map<String,Object> fullOrder=new HashMap<>();
             fullOrder.put("id",order.getId());
-            fullOrder.put("createTime",order.getCreateTime());
+            fullOrder.put("createTime",order.getCreateTime().toString());
             fullOrder.put("countdown",order.getCountdown());
             fullOrder.put("postFee",order.getPostFee());
             fullOrder.put("payMoney",order.getPayMoney());

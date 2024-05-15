@@ -101,8 +101,7 @@ public class UserController {
     @GetMapping("/address")
     @ResponseBody
     public Result<List<Address>> getAddress(){
-        Map<String, Object> u= ThreadLocalUtil.get();
-        Integer user_id= Integer.parseInt((String) u.get("id"));
+        Integer user_id= UserUtil.getUserId();
         return Result.success(userService.getAddress(user_id));
     }
 
